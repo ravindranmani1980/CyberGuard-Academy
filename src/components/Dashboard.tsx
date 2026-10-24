@@ -4,6 +4,7 @@ import { UserStats, BreachIncident, SimulationType } from '../types';
 import { BADGES } from '../data/badges';
 import { calculateRankAndLevel } from '../utils/storage';
 import { playClickSound } from '../utils/audio';
+import { ThreatResilienceChart } from './ThreatResilienceChart';
 
 interface DashboardProps {
   stats: UserStats;
@@ -189,6 +190,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Weekly Threat Resilience Trend Chart */}
+      <ThreatResilienceChart
+        data={stats.sessionHistory || []}
+        currentScore={stats.defenseScore}
+      />
 
       {/* Category Mastery Meters */}
       <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">

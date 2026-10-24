@@ -1,5 +1,12 @@
 export type SimulationType = 'phishing' | 'wifi' | 'social_eng' | 'password' | 'ransomware';
 
+export interface SessionScorePoint {
+  session: string;
+  score: number;
+  breaches: number;
+  drills: number;
+}
+
 export interface UserStats {
   xp: number;
   level: number;
@@ -19,6 +26,7 @@ export interface UserStats {
   unlockedBadgeIds: string[];
   reportedThreatIds: string[];
   verifiedThreatIds: string[];
+  sessionHistory?: SessionScorePoint[];
 }
 
 export interface BreachIncident {

@@ -3,6 +3,16 @@ import { UserStats, BreachIncident } from '../types';
 const STORAGE_KEY = 'threatguard_user_sandbox_v1';
 const INCIDENTS_KEY = 'threatguard_incidents_sandbox_v1';
 
+export const DEFAULT_SESSION_HISTORY = [
+  { session: 'S-1', score: 52, breaches: 3, drills: 2 },
+  { session: 'S-2', score: 58, breaches: 2, drills: 3 },
+  { session: 'S-3', score: 61, breaches: 2, drills: 4 },
+  { session: 'S-4', score: 65, breaches: 1, drills: 4 },
+  { session: 'S-5', score: 67, breaches: 1, drills: 5 },
+  { session: 'S-6', score: 70, breaches: 1, drills: 6 },
+  { session: 'S-7 (Now)', score: 72, breaches: 1, drills: 7 },
+];
+
 export const INITIAL_USER_STATS: UserStats = {
   xp: 180,
   level: 1,
@@ -22,6 +32,7 @@ export const INITIAL_USER_STATS: UserStats = {
   unlockedBadgeIds: ['badge_first_defense'],
   reportedThreatIds: [],
   verifiedThreatIds: ['threat_discord_1'],
+  sessionHistory: DEFAULT_SESSION_HISTORY,
 };
 
 export const INITIAL_INCIDENTS: BreachIncident[] = [
@@ -56,7 +67,11 @@ export const loadUserStats = (): UserStats => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return INITIAL_USER_STATS;
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed.sessionHistory || parsed.sessionHistory.length === 0) {
+      parsed.sessionHistory = DEFAULT_SESSION_HISTORY;
+    }
+    return parsed;
   } catch {
     return INITIAL_USER_STATS;
   }

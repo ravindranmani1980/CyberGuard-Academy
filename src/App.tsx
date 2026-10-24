@@ -44,10 +44,20 @@ export default function App() {
 
     setStats(prev => {
       const newScore = Math.max(20, prev.defenseScore - 4);
+      const history = prev.sessionHistory ? [...prev.sessionHistory] : [];
+      if (history.length > 0) {
+        const last = history[history.length - 1];
+        history[history.length - 1] = {
+          ...last,
+          score: newScore,
+          breaches: last.breaches + 1,
+        };
+      }
       return {
         ...prev,
         defenseScore: newScore,
         breachesTriggered: prev.breachesTriggered + 1,
+        sessionHistory: history,
       };
     });
   };
@@ -99,6 +109,15 @@ export default function App() {
       }
 
       const newDefenseScore = Math.min(100, prev.defenseScore + 3);
+      const history = prev.sessionHistory ? [...prev.sessionHistory] : [];
+      if (history.length > 0) {
+        const last = history[history.length - 1];
+        history[history.length - 1] = {
+          ...last,
+          score: newDefenseScore,
+          drills: last.drills + 1,
+        };
+      }
 
       return {
         ...prev,
@@ -109,6 +128,7 @@ export default function App() {
         simulationsCompleted: prev.simulationsCompleted + 1,
         unlockedBadgeIds: nextBadges,
         categoryMastery: updatedMastery,
+        sessionHistory: history,
       };
     });
   };
