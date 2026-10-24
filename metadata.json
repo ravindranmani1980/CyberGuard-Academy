@@ -1,0 +1,6 @@
+{
+  "name": "ThreatGuard: Cyber Defense Game",
+  "description": "Interactive cybersecurity game and threat simulator teaching safe digital habits through real-world scenarios, immediate breach diagnostics, actionable tips, and zero-data privacy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
