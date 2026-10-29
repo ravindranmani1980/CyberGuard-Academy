@@ -1,7 +1,9 @@
-import { UserStats, BreachIncident } from '../types';
+import { UserStats, BreachIncident, PeerThreat } from '../types';
+import { INITIAL_PEER_THREATS } from '../data/threatIntel';
 
 const STORAGE_KEY = 'threatguard_user_sandbox_v1';
 const INCIDENTS_KEY = 'threatguard_incidents_sandbox_v1';
+const THREATS_KEY = 'threatguard_peer_threats_v1';
 
 export const DEFAULT_SESSION_HISTORY = [
   { session: 'S-1', score: 52, breaches: 3, drills: 2 },
@@ -103,11 +105,38 @@ export const saveBreachIncidents = (incidents: BreachIncident[]) => {
   }
 };
 
+export const loadPeerThreats = (): PeerThreat[] => {
+  try {
+    const raw = localStorage.getItem(THREATS_KEY);
+    if (!raw) return INITIAL_PEER_THREATS;
+    const parsed: PeerThreat[] = JSON.parse(raw);
+    // Ensure initial comments are backfilled if loaded from older cache
+    return parsed.map((item) => {
+      if (!item.comments) {
+        const seed = INITIAL_PEER_THREATS.find((s) => s.id === item.id);
+        return { ...item, comments: seed?.comments || [] };
+      }
+      return item;
+    });
+  } catch {
+    return INITIAL_PEER_THREATS;
+  }
+};
+
+export const savePeerThreats = (threats: PeerThreat[]) => {
+  try {
+    localStorage.setItem(THREATS_KEY, JSON.stringify(threats));
+  } catch {
+    // Fail safe
+  }
+};
+
 // 1-Click Panic Shredder: Compliant with GDPR/CCPA right to erasure
 export const shredAllData = () => {
   try {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(INCIDENTS_KEY);
+    localStorage.removeItem(THREATS_KEY);
     // Overwrite with zeroes in memory
     sessionStorage.clear();
   } catch {

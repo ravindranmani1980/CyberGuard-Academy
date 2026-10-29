@@ -18,6 +18,28 @@ export const INITIAL_PEER_THREATS: PeerThreat[] = [
     actionableTip: 'Never click trade links or verification URLs sent over Discord DMs. Go directly to store.steampowered.com in an isolated browser window.',
     verificationsCount: 42,
     isUserVerified: true,
+    comments: [
+      {
+        id: 'cmt-discord-1',
+        author: 'HexValkyrie',
+        role: 'Stanford CyberSec',
+        timestamp: '12m ago',
+        strategyType: 'Identity Hardening',
+        content: 'Revoke any active Steam Web API key immediately at steamcommunity.com/dev/apikey — scammers often generate a rogue API key to hijack trade offers silently even after you change your password.',
+        upvotes: 14,
+        isUpvotedByUser: false,
+      },
+      {
+        id: 'cmt-discord-2',
+        author: 'CipherPulse',
+        role: 'MIT ByteHacks',
+        timestamp: '6m ago',
+        strategyType: 'Technical Control',
+        content: 'In Discord Privacy & Safety settings, disable "Allow direct messages from server members" on large public gaming servers to block automated impersonator bots.',
+        upvotes: 9,
+        isUpvotedByUser: false,
+      },
+    ],
   },
   {
     id: 'threat_qr_parking',
@@ -36,6 +58,18 @@ export const INITIAL_PEER_THREATS: PeerThreat[] = [
     actionableTip: 'Inspect physical QR codes with your finger before scanning—if it feels like a peel-off sticker over the original sign, do not scan it. Download the official city parking app directly from the iOS App Store or Google Play.',
     verificationsCount: 29,
     isUserVerified: false,
+    comments: [
+      {
+        id: 'cmt-qr-1',
+        author: 'ZeroHunter',
+        role: 'Austin High CyberClub',
+        timestamp: '41m ago',
+        strategyType: 'Verification Step',
+        content: 'Always use your native phone camera preview banner to read the full domain hostname before tapping through, and type the zone number directly inside the official parking app instead of scanning physical stickers.',
+        upvotes: 11,
+        isUpvotedByUser: false,
+      },
+    ],
   },
   {
     id: 'threat_apk_spotify',
@@ -54,6 +88,18 @@ export const INITIAL_PEER_THREATS: PeerThreat[] = [
     actionableTip: 'Never sideload modified APKs from unknown links. Rogue APKs frequently bundle Banking Trojans, SMS forwarders, or background cryptominers.',
     verificationsCount: 56,
     isUserVerified: false,
+    comments: [
+      {
+        id: 'cmt-apk-1',
+        author: 'PacketNomad',
+        role: 'Tokyo ZeroDay Squad',
+        timestamp: '2h ago',
+        strategyType: 'Network Isolation',
+        content: 'If someone already installed a modded APK, immediately put the phone in Airplane Mode, boot into Android Safe Mode to revoke Accessibility rights, and uninstall the package before reconnecting.',
+        upvotes: 19,
+        isUpvotedByUser: false,
+      },
+    ],
   },
   {
     id: 'threat_insta_brand',
@@ -72,5 +118,17 @@ export const INITIAL_PEER_THREATS: PeerThreat[] = [
     actionableTip: 'If a sponsorship or brand collaboration requires you to pay upfront for "shipping" or "account verification," it is 100% a scam.',
     verificationsCount: 19,
     isUserVerified: false,
+    comments: [
+      {
+        id: 'cmt-insta-1',
+        author: 'NeonGuardian',
+        role: 'Berlin HackLab',
+        timestamp: '3h ago',
+        strategyType: 'Verification Step',
+        content: 'Tap the three dots on the Instagram profile and select "About this account" -> "Former usernames". Fake ambassador accounts almost always show 4+ username changes in the last 90 days.',
+        upvotes: 8,
+        isUpvotedByUser: false,
+      },
+    ],
   },
 ];

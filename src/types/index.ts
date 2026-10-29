@@ -53,6 +53,23 @@ export interface Badge {
   xpReward: number;
 }
 
+export type MitigationStrategyCategory =
+  | 'Technical Control'
+  | 'Identity Hardening'
+  | 'Verification Step'
+  | 'Network Isolation';
+
+export interface ThreatComment {
+  id: string;
+  author: string;
+  role: string;
+  timestamp: string;
+  strategyType: MitigationStrategyCategory;
+  content: string;
+  upvotes: number;
+  isUpvotedByUser?: boolean;
+}
+
 export interface PeerThreat {
   id: string;
   title: string;
@@ -66,6 +83,7 @@ export interface PeerThreat {
   actionableTip: string;
   verificationsCount: number;
   isUserVerified?: boolean;
+  comments?: ThreatComment[];
 }
 
 export interface LeaderboardUser {

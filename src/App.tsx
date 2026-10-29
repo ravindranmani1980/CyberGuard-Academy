@@ -173,6 +173,28 @@ export default function App() {
     });
   };
 
+  // Add peer mitigation strategy comment
+  const handleAddMitigationComment = () => {
+    setStats(prev => {
+      const nextBadges = prev.unlockedBadgeIds.includes('badge_peer_sentinel')
+        ? prev.unlockedBadgeIds
+        : [...prev.unlockedBadgeIds, 'badge_peer_sentinel'];
+      const newXp = prev.xp + 15;
+      const newRank = calculateRankAndLevel(newXp);
+      return {
+        ...prev,
+        xp: newXp,
+        level: newRank.level,
+        rankTitle: newRank.rankTitle,
+        unlockedBadgeIds: nextBadges,
+      };
+    });
+    setToastMessage({
+      title: '+15 XP Earned',
+      subtitle: 'Your mitigation strategy was added to the community defense runbook.',
+    });
+  };
+
   // Data purged from Privacy Shredder
   const handleDataPurged = () => {
     setStats(loadUserStats());
@@ -231,6 +253,7 @@ export default function App() {
           <PeerThreatRadar
             onVerifyThreat={handleVerifyThreat}
             onAddThreat={handleAddThreat}
+            onAddMitigationComment={handleAddMitigationComment}
           />
         )}
 
