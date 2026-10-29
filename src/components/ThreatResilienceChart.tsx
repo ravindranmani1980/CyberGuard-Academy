@@ -10,7 +10,7 @@ import {
   Tooltip,
   ReferenceLine,
 } from 'recharts';
-import { TrendingUp, ShieldCheck, Activity, AlertOctagon } from 'lucide-react';
+import { TrendingUp, ShieldCheck } from 'lucide-react';
 import { SessionScorePoint } from '../types';
 
 interface ThreatResilienceChartProps {
@@ -24,26 +24,26 @@ interface CustomTooltipProps {
   label?: string;
 }
 
-const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
+const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const item = payload[0].payload;
     return (
-      <div className="p-3 bg-slate-950/95 border border-cyan-500/40 rounded-xl shadow-2xl backdrop-blur-md text-xs space-y-1.5 font-sans min-w-[170px]">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-          <span className="font-bold text-white font-mono">{item.session}</span>
-          <span className="text-[10px] text-cyan-400 font-mono">AUDIT RECORD</span>
+      <div className="p-3.5 bg-[#081420] border border-[#3E6E86]/50 rounded-lg shadow-xl text-xs space-y-1.5 min-w-[180px] text-[#EEF3F1]">
+        <div className="flex items-center justify-between border-b border-[#C9D3D9]/20 pb-1.5">
+          <span className="font-semibold text-[#EEF3F1] font-mono">{item.session}</span>
+          <span className="text-[10px] text-[#5FD3BF] font-mono uppercase">Session Record</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-slate-400">Resilience Score:</span>
-          <span className="font-bold font-mono text-cyan-300 text-sm">{item.score}%</span>
+          <span className="text-[#A9B7BF]">Posture Score:</span>
+          <span className="font-semibold font-mono text-[#5FD3BF] text-sm">{item.score}%</span>
         </div>
         <div className="flex items-center justify-between text-[11px]">
-          <span className="text-slate-400">Drills Completed:</span>
-          <span className="font-mono text-emerald-400">{item.drills} drills</span>
+          <span className="text-[#A9B7BF]">Drills Passed:</span>
+          <span className="font-mono text-[#EEF3F1]">{item.drills} drills</span>
         </div>
         <div className="flex items-center justify-between text-[11px]">
-          <span className="text-slate-400">Breaches Incurred:</span>
-          <span className={`font-mono ${item.breaches > 1 ? 'text-amber-400' : 'text-slate-400'}`}>
+          <span className="text-[#A9B7BF]">Breaches Triggered:</span>
+          <span className={`font-mono ${item.breaches > 1 ? 'text-[#EBC385]' : 'text-[#A9B7BF]'}`}>
             {item.breaches} {item.breaches === 1 ? 'breach' : 'breaches'}
           </span>
         </div>
@@ -72,39 +72,34 @@ export const ThreatResilienceChart: React.FC<ThreatResilienceChartProps> = ({ da
   );
 
   return (
-    <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
-      {/* Chart Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+    <div className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">
+      {/* Chart Section Header matching Postrix */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#D9DDD3]">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-1">
-            <Activity className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Weekly Threat Resilience Trend</span>
-            <span aria-hidden="true">·</span>
-            <span>Last 7 Sessions</span>
-          </div>
-          <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-            Defense Score Trajectory Over Time
-          </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Empirical measurement of your threat identification accuracy, incident triage speeds, and breach mitigation habits.
+          <span className="rm-kicker">02 / Longitudinal Posture Telemetry</span>
+          <h2 className="text-lg font-semibold text-[#0E2238] tracking-tight">
+            7-Session Threat Resilience Trajectory
+          </h2>
+          <p className="text-xs text-[#4B5A66] mt-0.5">
+            Longitudinal measurement of threat identification accuracy, incident triage speeds, and defensive posture over the last 7 sessions.
           </p>
         </div>
 
         {/* High-level performance indicators */}
-        <div className="flex items-center gap-4 self-start sm:self-auto">
+        <div className="flex items-center gap-5 self-start sm:self-auto bg-[#F3F5F1] border border-[#D9DDD3] rounded-lg px-4 py-2.5">
           <div className="text-right">
-            <span className="text-[11px] text-slate-400 block mb-0.5">7-Session Growth</span>
-            <div className="flex items-center gap-1 font-mono text-sm font-bold text-emerald-400">
+            <span className="text-[11px] font-mono text-[#4B5A66] block mb-0.5 uppercase">7-Session Delta</span>
+            <div className="flex items-center justify-end gap-1 font-mono text-sm font-semibold text-emerald-700 tabular-nums">
               <TrendingUp className="w-3.5 h-3.5" />
               <span>{netDelta >= 0 ? `+${netDelta}%` : `${netDelta}%`}</span>
             </div>
           </div>
 
-          <div className="h-8 w-px bg-slate-800 hidden sm:block" />
+          <div className="h-8 w-px bg-[#C7CDC0]" />
 
           <div className="text-right">
-            <span className="text-[11px] text-slate-400 block mb-0.5">Rolling Average</span>
-            <span className="font-mono text-sm font-bold text-cyan-300">
+            <span className="text-[11px] font-mono text-[#4B5A66] block mb-0.5 uppercase">Rolling Mean</span>
+            <span className="font-mono text-sm font-semibold text-[#0E2238] tabular-nums">
               {averageScore}%
             </span>
           </div>
@@ -112,39 +107,39 @@ export const ThreatResilienceChart: React.FC<ThreatResilienceChartProps> = ({ da
       </div>
 
       {/* Recharts Area / Line Chart Container */}
-      <div className="w-full h-64 sm:h-72 pt-2">
+      <div className="w-full h-64 sm:h-72 pt-1">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}
             margin={{ top: 15, right: 15, left: -15, bottom: 5 }}
           >
             <defs>
-              <linearGradient id="cyberCyanGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
+              <linearGradient id="postrixTealGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#2BB5A0" stopOpacity={0.28} />
+                <stop offset="95%" stopColor="#2BB5A0" stopOpacity={0.02} />
               </linearGradient>
             </defs>
 
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#1e293b"
+              stroke="#D9DDD3"
               vertical={false}
             />
 
             <XAxis
               dataKey="session"
-              stroke="#64748b"
-              tick={{ fill: '#94a3b8', fontSize: 11, fontFamily: 'JetBrains Mono' }}
-              tickLine={{ stroke: '#334155' }}
-              axisLine={{ stroke: '#334155' }}
+              stroke="#4B5A66"
+              tick={{ fill: '#4B5A66', fontSize: 11, fontFamily: 'IBM Plex Mono' }}
+              tickLine={{ stroke: '#C7CDC0' }}
+              axisLine={{ stroke: '#C7CDC0' }}
             />
 
             <YAxis
               domain={[30, 100]}
-              stroke="#64748b"
-              tick={{ fill: '#94a3b8', fontSize: 11, fontFamily: 'JetBrains Mono' }}
-              tickLine={{ stroke: '#334155' }}
-              axisLine={{ stroke: '#334155' }}
+              stroke="#4B5A66"
+              tick={{ fill: '#4B5A66', fontSize: 11, fontFamily: 'IBM Plex Mono' }}
+              tickLine={{ stroke: '#C7CDC0' }}
+              axisLine={{ stroke: '#C7CDC0' }}
               unit="%"
             />
 
@@ -153,12 +148,13 @@ export const ThreatResilienceChart: React.FC<ThreatResilienceChartProps> = ({ da
             {/* Target 70% Guardian Threshold line */}
             <ReferenceLine
               y={70}
-              stroke="#10b981"
+              stroke="#D79A45"
               strokeDasharray="4 4"
               label={{
-                value: 'Guardian Baseline (70%)',
-                fill: '#34d399',
+                value: 'Target Posture Baseline (70%)',
+                fill: '#92400e',
                 fontSize: 10,
+                fontFamily: 'IBM Plex Mono',
                 position: 'insideTopRight',
               }}
             />
@@ -167,28 +163,28 @@ export const ThreatResilienceChart: React.FC<ThreatResilienceChartProps> = ({ da
             <Area
               type="monotone"
               dataKey="score"
-              stroke="#06b6d4"
-              strokeWidth={3}
+              stroke="#0E2238"
+              strokeWidth={2.5}
               fillOpacity={1}
-              fill="url(#cyberCyanGradient)"
+              fill="url(#postrixTealGradient)"
               activeDot={{
                 r: 6,
-                fill: '#22d3ee',
-                stroke: '#083344',
+                fill: '#2BB5A0',
+                stroke: '#081420',
                 strokeWidth: 2,
               }}
             />
 
-            {/* Subtle trendline */}
+            {/* Subtle secondary line */}
             <Line
               type="monotone"
               dataKey="score"
-              stroke="#38bdf8"
+              stroke="#2BB5A0"
               strokeWidth={2}
               dot={{
                 r: 4,
-                fill: '#0f172a',
-                stroke: '#06b6d4',
+                fill: '#FFFFFF',
+                stroke: '#0E2238',
                 strokeWidth: 2,
               }}
             />
@@ -197,22 +193,22 @@ export const ThreatResilienceChart: React.FC<ThreatResilienceChartProps> = ({ da
       </div>
 
       {/* Narrative Chart Footnote */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-800/80 text-xs text-slate-400">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#D9DDD3] text-xs text-[#4B5A66]">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
           <span>
-            Target threshold is <strong>70%</strong>. Maintaining a score above this benchmark grants active protection against automated social engineering bot campaigns.
+            Target posture baseline is <strong className="text-[#0E2238] font-mono">70%</strong>. Maintaining posture above this threshold verifies active resilience against social engineering and credential-harvesting vectors.
           </span>
         </div>
 
-        <div className="flex items-center gap-4 text-[11px] font-mono shrink-0">
+        <div className="flex items-center gap-4 text-[11px] font-mono shrink-0 text-[#16232F]">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
-            <span>Resilience Score</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#0E2238]" />
+            <span>Posture Score</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-1 bg-emerald-400" />
-            <span>Target Benchmark</span>
+            <span className="w-2.5 h-0.5 bg-[#D79A45]" />
+            <span>70% Baseline</span>
           </div>
         </div>
       </div>

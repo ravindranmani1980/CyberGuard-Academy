@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Shield, AlertTriangle, CheckCircle, Clock, RotateCcw, Flame, HardDrive, WifiOff } from 'lucide-react';
+import { Terminal, CheckCircle, Clock, RotateCcw, Flame, HardDrive, WifiOff } from 'lucide-react';
 import { RANSOMWARE_STEPS, TriageStep } from '../../data/scenarios';
 import { BreachIncident } from '../../types';
 import { playClickSound, playSuccessSound, playBreachAlertSound } from '../../utils/audio';
@@ -22,7 +22,6 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
         setTimeLeft((prev) => prev - 1);
       }, 1000);
     } else if (timeLeft === 0 && !isResolved && isActive) {
-      // Time expired -> Total Drive Encryption!
       playBreachAlertSound();
       const incident: BreachIncident = {
         id: `inc-ransom-timeout-${Date.now()}`,
@@ -67,7 +66,6 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
     playClickSound();
     if (!isActive) return;
 
-    // Check if user clicked "Pay Ransom"
     if (step.id === 'step-pay-ransom') {
       playBreachAlertSound();
       setIsActive(false);
@@ -100,11 +98,9 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
       return;
     }
 
-    // Normal valid triage step
     const nextCompleted = [...completedStepIds, step.id];
     setCompletedStepIds(nextCompleted);
 
-    // If completed the 3 valid defensive steps
     const validCount = nextCompleted.filter(id => id !== 'step-pay-ransom').length;
     if (validCount === 3) {
       playSuccessSound();
@@ -117,23 +113,20 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
   return (
     <div className="space-y-6">
       {/* Concept Header */}
-      <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-5 rounded-xl bg-white border border-[#D9DDD3] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-1">
-            <span>Simulation 05</span>
-            <span aria-hidden="true">·</span>
-            <span>Ransomware Emergency Response Triage</span>
-          </div>
-          <h2 className="text-lg font-bold text-white">
-            Under Attack: 45 Seconds to Halt Malware Spread
+          <span className="rm-kicker">MOD-05 / Incident Response &amp; Ransomware Containment</span>
+          <h2 className="text-lg font-semibold text-[#0E2238]">
+            Active Endpoint Encryption Alert: 45-Second Containment Window
           </h2>
         </div>
         {!isActive && !isResolved && (
           <button
+            type="button"
             onClick={handleStartDrill}
-            className="px-4 py-2 bg-gradient-to-r from-red-500 to-amber-500 hover:from-red-400 hover:to-amber-400 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer self-start sm:self-auto shadow-md"
+            className="px-4 py-2 bg-[#0E2238] hover:bg-[#081420] text-[#F3F5F1] font-semibold rounded-lg text-xs flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
           >
-            <Flame className="w-4 h-4 text-slate-950" />
+            <Flame className="w-4 h-4 text-[#EBC385]" />
             <span>Launch Triage Incident Drill</span>
           </button>
         )}
@@ -143,36 +136,36 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Live Attack Monitor & Terminal */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#D9DDD3] pb-3.5">
               <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-red-400" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                  ACTIVE ALERT: C:\Windows\Temp\host_svc32.exe
+                <Terminal className="w-4 h-4 text-[#0E2238]" />
+                <h3 className="text-xs font-bold text-[#0E2238] uppercase tracking-wider font-mono">
+                  ENDPOINT TELEMETRY: C:\Windows\Temp\host_svc32.exe
                 </h3>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-400" />
-                <span className={`font-mono text-xs font-bold ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-amber-400'}`}>
-                  00:{timeLeft.toString().padStart(2, '0')} SECONDS
+              <div className="flex items-center gap-2 bg-[#081420] px-3 py-1 rounded-md border border-[#3E6E86]/40">
+                <Clock className="w-3.5 h-3.5 text-[#EBC385]" />
+                <span className={`font-mono text-xs font-semibold tabular-nums ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-[#EBC385]'}`}>
+                  00:{timeLeft.toString().padStart(2, '0')}s
                 </span>
               </div>
             </div>
 
-            {/* Simulated Ransom Note & Encryption Bar */}
-            <div className="p-4 bg-slate-950 rounded-xl border border-red-500/30 space-y-3 font-mono text-xs">
-              <div className="text-red-400 font-bold flex items-center justify-between">
-                <span>⚠️ ENCRYPTION IN PROGRESS</span>
-                <span>
-                  {completedStepIds.includes('step-kill-process') ? 'PROCESS KILLED [HALTED]' : 'CPU: 94% · AES-256-CBC'}
+            {/* Simulated Ransom Note & Encryption Bar (Dark Command Console) */}
+            <div className="p-5 bg-[#081420] rounded-xl border border-[#3E6E86]/50 space-y-3.5 font-mono text-xs text-[#EEF3F1]">
+              <div className="text-[#EBC385] font-semibold flex items-center justify-between">
+                <span>⚠️ FILE SYSTEM ENCRYPTION STATUS</span>
+                <span className={completedStepIds.includes('step-kill-process') ? 'text-[#5FD3BF]' : 'text-red-400'}>
+                  {completedStepIds.includes('step-kill-process') ? 'PROCESS TERMINATED [HALTED]' : 'CPU: 94% · AES-256-CBC'}
                 </span>
               </div>
 
               {/* Progress bar of drive encryption */}
-              <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-[#102236] rounded-full overflow-hidden border border-[#C9D3D9]/15">
                 <div
                   className={`h-full transition-all duration-1000 ${
-                    completedStepIds.includes('step-kill-process') ? 'bg-emerald-500' : 'bg-red-500'
+                    completedStepIds.includes('step-kill-process') ? 'bg-[#2BB5A0]' : 'bg-red-500'
                   }`}
                   style={{
                     width: completedStepIds.includes('step-kill-process')
@@ -182,25 +175,26 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
                 />
               </div>
 
-              <div className="text-slate-400 text-[11px] leading-relaxed pt-2 border-t border-slate-800">
-                <p className="text-slate-200 font-bold mb-1">Extortion Demand Note:</p>
-                <p className="text-red-300">"Your personal photos, homework, and credentials are encrypted. Send 0.05 BTC to 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa within 48 hours."</p>
+              <div className="text-[#A9B7BF] text-[11px] leading-relaxed pt-3 border-t border-[#C9D3D9]/15">
+                <p className="text-[#EEF3F1] font-semibold mb-1">Detected Extortion Artifact (README_DECRYPT.txt):</p>
+                <p className="text-red-300">&quot;Your personal documents, coursework, and tokens are encrypted. Transfer 0.05 BTC to 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa within 48 hours.&quot;</p>
               </div>
             </div>
 
             {/* Victory Resolution Card */}
             {isResolved && (
-              <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 text-xs space-y-2 animate-in fade-in">
-                <h4 className="font-bold text-sm flex items-center gap-2 text-emerald-300">
-                  <CheckCircle className="w-5 h-5 text-emerald-400" />
-                  <span>Threat Mitigated: System Isolated & Files Preserved!</span>
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs space-y-2">
+                <h4 className="font-bold text-sm flex items-center gap-2 text-emerald-900">
+                  <CheckCircle className="w-5 h-5 text-emerald-700" />
+                  <span>Incident Contained: Network Isolated &amp; Process Terminated</span>
                 </h4>
-                <p className="text-slate-200 leading-relaxed">
-                  Outstanding incident triage! By disconnecting network access first, you blocked lateral movement to family/school network drives. Terminating the rogue binary stopped encryption, and keeping offline backups means zero ransom needs to be paid.
+                <p className="leading-relaxed">
+                  By disconnecting network interfaces first, you prevented lateral movement to shared network drives. Terminating the rogue binary stopped local file encryption, and maintaining air-gapped backups ensures full recovery without paying ransom.
                 </p>
                 <button
+                  type="button"
                   onClick={handleStartDrill}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-medium text-xs flex items-center gap-1.5 cursor-pointer mt-2"
+                  className="px-3.5 py-1.5 bg-[#0E2238] hover:bg-[#081420] text-[#F3F5F1] rounded-lg font-medium text-xs flex items-center gap-1.5 cursor-pointer mt-2"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Replay Incident Drill</span>
@@ -212,13 +206,16 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
 
         {/* Right Column: Interactive Incident Response Actions */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-              Incident Response Triage Actions
-            </span>
-            <p className="text-xs text-slate-300">
-              Prioritize correct emergency containment actions to protect the network.
-            </p>
+          <div className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-3.5">
+            <div>
+              <span className="rm-kicker">Containment Runbook</span>
+              <h3 className="text-base font-semibold text-[#0E2238]">
+                Incident Response Triage Actions
+              </h3>
+              <p className="text-xs text-[#4B5A66] mt-0.5">
+                Execute valid containment steps while avoiding extortion traps.
+              </p>
+            </div>
 
             <div className="space-y-2.5 pt-1">
               {RANSOMWARE_STEPS.map((step) => {
@@ -226,27 +223,28 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
                 return (
                   <button
                     key={step.id}
+                    type="button"
                     onClick={() => handleExecuteAction(step)}
                     disabled={isDone || !isActive}
-                    className={`w-full text-left p-3 rounded-xl border text-xs leading-relaxed transition-all cursor-pointer ${
+                    className={`w-full text-left p-3.5 rounded-xl border text-xs leading-relaxed transition-all cursor-pointer ${
                       isDone
-                        ? 'bg-slate-950/50 border-emerald-500/40 text-emerald-300'
+                        ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
                         : step.id === 'step-pay-ransom'
-                        ? 'bg-red-950/20 border-red-800/40 text-red-200 hover:bg-red-950/40'
-                        : 'bg-slate-950 border-slate-800 text-slate-200 hover:border-slate-700'
+                        ? 'bg-red-50/70 border-red-200 text-red-950 hover:bg-red-100'
+                        : 'bg-[#F3F5F1] border-[#C7CDC0] text-[#16232F] hover:border-[#0E2238] hover:bg-white'
                     } ${!isActive && !isDone ? 'opacity-60 cursor-not-allowed' : ''}`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-semibold text-white">
-                        {step.id === 'step-isolate-network' && <WifiOff className="w-3.5 h-3.5 inline mr-1 text-cyan-400" />}
-                        {step.id === 'step-kill-process' && <Terminal className="w-3.5 h-3.5 inline mr-1 text-amber-400" />}
-                        {step.id === 'step-preserve-evidence' && <HardDrive className="w-3.5 h-3.5 inline mr-1 text-purple-400" />}
+                      <span className="font-semibold text-[#0E2238]">
+                        {step.id === 'step-isolate-network' && <WifiOff className="w-3.5 h-3.5 inline mr-1.5 text-[#0E2238]" />}
+                        {step.id === 'step-kill-process' && <Terminal className="w-3.5 h-3.5 inline mr-1.5 text-[#0E2238]" />}
+                        {step.id === 'step-preserve-evidence' && <HardDrive className="w-3.5 h-3.5 inline mr-1.5 text-[#0E2238]" />}
                         {step.actionText}
                       </span>
-                      {isDone && <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />}
+                      {isDone && <CheckCircle className="w-4 h-4 text-emerald-700 shrink-0" />}
                     </div>
                     {isDone && (
-                      <p className="text-[11px] text-slate-400 mt-1 border-t border-slate-800 pt-1">
+                      <p className="text-[11px] text-emerald-900 mt-1 border-t border-emerald-200 pt-1.5">
                         {step.explanation}
                       </p>
                     )}
@@ -256,12 +254,12 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
             </div>
 
             {/* 3-2-1 Rule Card */}
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-1.5">
-              <span className="font-semibold text-cyan-400">The Gold-Standard 3-2-1 Backup Rule:</span>
-              <ul className="text-slate-400 text-[11px] space-y-1">
-                <li>• <strong className="text-slate-300">3</strong> total copies of crucial data</li>
-                <li>• <strong className="text-slate-300">2</strong> different storage formats (e.g. SSD + Cloud)</li>
-                <li>• <strong className="text-slate-300">1</strong> offline, unplugged air-gapped drive that ransomware cannot touch</li>
+            <div className="p-4 rounded-xl bg-[#F3F5F1] border border-[#D9DDD3] text-xs space-y-1.5">
+              <span className="font-semibold text-[#0E2238] block">The 3-2-1 Immutable Backup Standard:</span>
+              <ul className="text-[#4B5A66] text-xs space-y-1">
+                <li>• <strong className="text-[#16232F]">3</strong> total copies of critical data</li>
+                <li>• <strong className="text-[#16232F]">2</strong> distinct storage media (e.g. NVMe + Cloud)</li>
+                <li>• <strong className="text-[#16232F]">1</strong> air-gapped, offline backup unreachable by ransomware</li>
               </ul>
             </div>
           </div>

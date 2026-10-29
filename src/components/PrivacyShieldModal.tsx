@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, ShieldCheck, Trash2, Download, CheckCircle2, AlertTriangle, X, ShieldAlert, Cpu } from 'lucide-react';
+import { Lock, Trash2, Download, CheckCircle2, X, Cpu } from 'lucide-react';
 import { UserStats, BreachIncident } from '../types';
 import { shredAllData } from '../utils/storage';
 import { playClickSound, playSuccessSound } from '../utils/audio';
@@ -61,36 +61,37 @@ export const PrivacyShieldModal: React.FC<PrivacyShieldModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div 
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+      <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="privacy-modal-title"
-        className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="w-full max-w-2xl bg-[#F3F5F1] border border-[#C7CDC0] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
       >
         {/* Top Header */}
-        <div className="bg-slate-950 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+        <div className="bg-[#081420] border-b border-[#3E6E86]/40 px-6 py-4 flex items-center justify-between text-[#EEF3F1]">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-cyan-950 border border-cyan-500/40 text-cyan-400">
-              <Lock className="w-5 h-5" />
+            <div className="rm-mono-mark !w-9 !h-9 !text-xs">
+              RM
             </div>
             <div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider">
-                <span>Data Privacy Constitution</span>
+              <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#5FD3BF] uppercase tracking-wider">
+                <span>Zero-Data Governance</span>
                 <span aria-hidden="true">·</span>
-                <span>Zero-Data-Retention Architecture</span>
+                <span>Client Sandbox Architecture</span>
               </div>
-              <h2 id="privacy-modal-title" className="text-lg font-bold text-white tracking-tight">
-                Modern Privacy Standards & Client Sandbox
+              <h2 id="privacy-modal-title" className="text-lg font-semibold text-[#EEF3F1] tracking-tight font-serif">
+                Data Privacy Standards &amp; Zero-Retention Assurance
               </h2>
             </div>
           </div>
           <button
+            type="button"
             onClick={() => {
               playClickSound();
               onClose();
             }}
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 text-[#A9B7BF] hover:text-white rounded-lg transition-colors cursor-pointer"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
@@ -98,85 +99,102 @@ export const PrivacyShieldModal: React.FC<PrivacyShieldModalProps> = ({
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="p-6 overflow-y-auto space-y-5 text-xs text-slate-300">
+        <div className="p-6 overflow-y-auto space-y-5 text-xs text-[#16232F]">
           {/* Real-time memory sandbox audit */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-cyan-500/30 space-y-2">
+          <div className="p-4 rounded-xl bg-[#081420] border border-[#3E6E86]/40 space-y-2.5 text-[#EEF3F1]">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-white flex items-center gap-1.5">
-                <Cpu className="w-4 h-4 text-cyan-400" />
-                <span>Active Local Sandbox Telemetry</span>
+              <span className="font-semibold text-[#EEF3F1] flex items-center gap-1.5 font-mono">
+                <Cpu className="w-4 h-4 text-[#5FD3BF]" />
+                <span>Active Client Sandbox Telemetry</span>
               </span>
-              <span className="font-mono text-emerald-400">ZERO REMOTE UPLOADS</span>
+              <span className="font-mono text-[#5FD3BF] text-[11px]">ZERO REMOTE UPLOADS</span>
             </div>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              ThreatGuard is engineered specifically to ensure no personal information, keystrokes, simulated credentials, or device identifiers are ever collected or stored on remote servers.
+            <p className="text-[#A9B7BF] text-xs leading-relaxed">
+              ThreatGuard is engineered so that zero personal information, keystrokes, candidate passwords, or device identifiers are ever transmitted to or persisted on remote servers.
             </p>
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800 font-mono text-[11px]">
+            <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-[#C9D3D9]/15 font-mono text-[11px]">
               <div>
-                <span className="text-slate-500 block">External DB:</span>
-                <span className="text-slate-200">None (0 bytes)</span>
+                <span className="text-[#A9B7BF] block">External DB:</span>
+                <span className="text-[#EEF3F1]">None (0 bytes)</span>
               </div>
               <div>
-                <span className="text-slate-500 block">Tracking Cookies:</span>
-                <span className="text-slate-200">Zero (0)</span>
+                <span className="text-[#A9B7BF] block">Tracking Cookies:</span>
+                <span className="text-[#EEF3F1]">Zero (0)</span>
               </div>
               <div>
-                <span className="text-slate-500 block">Encrypted Memory:</span>
-                <span className="text-cyan-400">Local Only</span>
+                <span className="text-[#A9B7BF] block">Session State:</span>
+                <span className="text-[#5FD3BF]">Local Browser RAM</span>
               </div>
             </div>
           </div>
 
           {/* Three Major Privacy Compliance Pillars */}
-          <div className="space-y-3">
-            <h4 className="font-bold text-white uppercase tracking-wider text-xs">
-              Regulatory Compliance Pillars
-            </h4>
-
+          <div className="space-y-2.5">
+            <span className="rm-kicker">Regulatory Compliance Matrix</span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                <span className="font-bold text-cyan-400 block">GDPR Compliant</span>
-                <p className="text-[11px] text-slate-400 leading-normal">
-                  Articles 17 & 25: Built-in Data Protection by Design and immediate Right to Erasure.
+              <div className="p-3.5 bg-white rounded-xl border border-[#D9DDD3] space-y-1">
+                <span className="font-semibold text-[#0E2238] block">GDPR Compliant</span>
+                <p className="text-xs text-[#4B5A66] leading-relaxed">
+                  Articles 17 &amp; 25: Data Protection by Design and immediate Right to Erasure.
                 </p>
               </div>
 
-              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                <span className="font-bold text-emerald-400 block">CCPA / CPRA</span>
-                <p className="text-[11px] text-slate-400 leading-normal">
-                  Strictly zero sale, sharing, or profiling of consumer or youth behavioral telemetry.
+              <div className="p-3.5 bg-white rounded-xl border border-[#D9DDD3] space-y-1">
+                <span className="font-semibold text-[#0E2238] block">CCPA / CPRA</span>
+                <p className="text-xs text-[#4B5A66] leading-relaxed">
+                  Strictly zero sale, sharing, or profiling of user or youth behavioral telemetry.
                 </p>
               </div>
 
-              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                <span className="font-bold text-purple-400 block">COPPA Protected</span>
-                <p className="text-[11px] text-slate-400 leading-normal">
-                  Guaranteed safe educational environment for teenagers without account requirements.
+              <div className="p-3.5 bg-white rounded-xl border border-[#D9DDD3] space-y-1">
+                <span className="font-semibold text-[#0E2238] block">COPPA Protected</span>
+                <p className="text-xs text-[#4B5A66] leading-relaxed">
+                  Safe educational environment for teenagers without account registration gates.
                 </p>
               </div>
             </div>
           </div>
 
+          {/* Author & Application Provenance */}
+          <div className="p-4 rounded-xl bg-white border border-[#D9DDD3] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div>
+              <span className="font-semibold text-[#0E2238] block">Author: Mani Ravindran</span>
+              <p className="text-xs text-[#4B5A66] mt-0.5">
+                Interactive cyber defense posture and zero-data educational simulation platform.
+              </p>
+            </div>
+            <a
+              href="https://ravindran.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-lg bg-[#0E2238] hover:bg-[#081420] text-[#5FD3BF] transition-colors font-mono text-xs self-start sm:self-auto shrink-0 flex items-center gap-1.5"
+            >
+              <span>ravindran.in</span>
+              <span>↗</span>
+            </a>
+          </div>
+
           {/* 1-Click Panic Shredder */}
-          <div className="p-4 rounded-xl bg-red-950/20 border border-red-500/30 space-y-3">
+          <div className="p-4 rounded-xl bg-red-50 border border-red-200 space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="font-bold text-red-300 flex items-center gap-1.5">
-                <Trash2 className="w-4 h-4 text-red-400" />
+              <h4 className="font-semibold text-red-900 flex items-center gap-1.5">
+                <Trash2 className="w-4 h-4 text-red-700" />
                 <span>Panic Memory Shredder (1-Click Zeroization)</span>
               </h4>
-              <span className="text-[10px] font-mono text-red-400 uppercase">Irreversible</span>
+              <span className="text-[10px] font-mono text-red-800 uppercase font-semibold">Irreversible</span>
             </div>
-            <p className="text-slate-300 text-[11px] leading-relaxed">
-              Instantly purge and zeroize all locally cached progress, defense badges, drill attempts, and breach post-mortem incident logs with a single click.
+            <p className="text-red-950 text-xs leading-relaxed">
+              Instantly purge and zeroize all locally cached progress, defense certifications, drill attempts, and breach post-mortem logs with a single click.
             </p>
 
             <button
+              type="button"
               onClick={handleShred}
               disabled={shredConfirmed}
-              className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              className={`w-full py-2.5 px-4 rounded-lg font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 shredConfirmed
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-red-950/80 hover:bg-red-900 border border-red-600 text-red-200'
+                  ? 'bg-emerald-700 text-white'
+                  : 'bg-red-800 hover:bg-red-900 text-white'
               }`}
             >
               {shredConfirmed ? (
@@ -187,7 +205,7 @@ export const PrivacyShieldModal: React.FC<PrivacyShieldModalProps> = ({
               ) : (
                 <>
                   <Trash2 className="w-4 h-4" />
-                  <span>Shred All Local Data Now</span>
+                  <span>Shred All Local Sandbox Data Now</span>
                 </>
               )}
             </button>
@@ -195,24 +213,26 @@ export const PrivacyShieldModal: React.FC<PrivacyShieldModalProps> = ({
         </div>
 
         {/* Action Footer */}
-        <div className="bg-slate-950 px-6 py-4 border-t border-slate-800 flex items-center justify-between gap-3">
+        <div className="bg-white px-6 py-4 border-t border-[#D9DDD3] flex items-center justify-between gap-3">
           <button
+            type="button"
             onClick={handleExportJson}
             disabled={isExporting}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-4 py-2 bg-[#F3F5F1] hover:bg-[#E9ECE6] border border-[#C7CDC0] text-[#0E2238] rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
           >
-            <Download className="w-4 h-4 text-cyan-400" />
+            <Download className="w-4 h-4 text-[#0E2238]" />
             <span>Export Audit Certificate (.json)</span>
           </button>
 
           <button
+            type="button"
             onClick={() => {
               playClickSound();
               onClose();
             }}
-            className="px-4 py-2 bg-slate-200 hover:bg-white text-slate-950 font-bold rounded-lg text-xs transition-colors cursor-pointer"
+            className="px-4 py-2 bg-[#0E2238] hover:bg-[#081420] text-[#F3F5F1] font-semibold rounded-lg text-xs transition-colors cursor-pointer"
           >
-            Close Privacy Radar
+            Close Governance Panel
           </button>
         </div>
       </div>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { Shield, Award, AlertTriangle, CheckCircle, RefreshCw, Lock, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { UserStats, BreachIncident, SimulationType, PeerThreat } from './types';
 import { loadUserStats, saveUserStats, loadBreachIncidents, saveBreachIncidents, calculateRankAndLevel } from './utils/storage';
-import { playLevelUpSound, playBreachAlertSound, playSuccessSound, playClickSound } from './utils/audio';
+import { playLevelUpSound, playBreachAlertSound, playClickSound } from './utils/audio';
 import { Header } from './components/Header';
 import { Dashboard } from './components/Dashboard';
 import { SimulationHub } from './components/SimulationHub';
@@ -69,7 +69,6 @@ export default function App() {
       const newXp = prev.xp + xpGained;
       const newRank = calculateRankAndLevel(newXp);
 
-      // Check level up
       if (newRank.level > oldRank.level) {
         playLevelUpSound();
         try {
@@ -82,25 +81,23 @@ export default function App() {
           // Ignore
         }
         setToastMessage({
-          title: `Rank Promoted: ${newRank.rankTitle}!`,
+          title: `Rank Promoted: ${newRank.rankTitle}`,
           subtitle: `You reached Level ${newRank.level} in the Cyber Guardian League.`,
         });
       }
 
-      // Check badge unlock
       const nextBadges = [...prev.unlockedBadgeIds];
       if (badgeIdToUnlock && !nextBadges.includes(badgeIdToUnlock)) {
         nextBadges.push(badgeIdToUnlock);
         const badge = BADGES.find(b => b.id === badgeIdToUnlock);
         if (badge) {
           setToastMessage({
-            title: `Badge Unlocked: ${badge.title}!`,
+            title: `Certification Unlocked: ${badge.title}`,
             subtitle: badge.description,
           });
         }
       }
 
-      // Update category mastery
       const currentMastery = prev.categoryMastery;
       const updatedMastery = { ...currentMastery };
       if (categoryKey in updatedMastery) {
@@ -157,8 +154,8 @@ export default function App() {
         verifiedThreatIds: [...prev.verifiedThreatIds, threatId],
       }));
       setToastMessage({
-        title: '+20 XP Earned!',
-        subtitle: 'Thank you for verifying peer cyber threat intelligence.',
+        title: '+20 XP Earned',
+        subtitle: 'Thank you for corroborating peer cyber threat intelligence.',
       });
     }
   };
@@ -171,8 +168,8 @@ export default function App() {
       reportedThreatIds: [...prev.reportedThreatIds, threat.id],
     }));
     setToastMessage({
-      title: '+50 XP Earned!',
-      subtitle: 'Your threat report was published anonymously to the peer radar.',
+      title: '+50 XP Earned',
+      subtitle: 'Your threat advisory was published anonymously to the peer radar.',
     });
   };
 
@@ -201,8 +198,8 @@ export default function App() {
   }, [toastMessage]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col bg-cyber-grid">
-      {/* Strict Top Bar Contract Header */}
+    <div className="min-h-screen flex flex-col bg-[#F3F5F1] text-[#16232F]">
+      {/* Postrix Site Header */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -211,7 +208,7 @@ export default function App() {
       />
 
       {/* Main Viewport Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 md:py-8">
+      <main className="flex-1 max-w-[1440px] w-full mx-auto px-6 py-8">
         {activeTab === 'dashboard' && (
           <Dashboard
             stats={stats}
@@ -275,37 +272,65 @@ export default function App() {
 
       {/* Dynamic Toast Feedback Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 border border-cyan-500/50 p-4 rounded-2xl shadow-2xl flex items-start gap-3 max-w-sm animate-in slide-in-from-bottom-5 duration-300">
-          <div className="p-2 rounded-xl bg-cyan-950 border border-cyan-500/40 text-cyan-400 shrink-0">
-            <Sparkles className="w-5 h-5" />
+        <div className="fixed bottom-6 right-6 z-50 bg-[#081420] border border-[#3E6E86]/60 p-4 rounded-xl shadow-2xl flex items-start gap-3 max-w-sm text-[#EEF3F1]">
+          <div className="rm-mono-mark !w-8 !h-8 !text-xs shrink-0">
+            <Sparkles className="w-4 h-4 text-[#062019]" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white">{toastMessage.title}</h4>
-            <p className="text-xs text-slate-300 mt-0.5">{toastMessage.subtitle}</p>
+            <h4 className="text-sm font-semibold text-[#EEF3F1]">{toastMessage.title}</h4>
+            <p className="text-xs text-[#A9B7BF] mt-0.5">{toastMessage.subtitle}</p>
           </div>
         </div>
       )}
 
-      {/* Quiet, Clean Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-cyan-400" />
-            <span>ThreatGuard: Interactive Cyber Defense & Simulation Game</span>
+      {/* Postrix Footer matching apps.ravindran.in/postrix/app/ */}
+      <footer className="bg-[#081420] text-[#B9C4CC] border-t border-[#3E6E86]/35 px-6 py-6 mt-auto">
+        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5">
+            <span className="rm-mono-mark !w-6 !h-6 !text-[11px]" aria-hidden="true">
+              RM
+            </span>
+            <span>
+              <strong className="font-serif text-sm font-semibold text-[#F3F5F1]">
+                Threat <span className="text-[#D79A45]">Guard</span>
+              </strong>{' '}
+              — Interactive Cyber Defense Posture &amp; Threat Simulation Platform
+            </span>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <span>
+              Author:{' '}
+              <a
+                href="https://ravindran.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#5FD3BF] hover:underline font-medium"
+              >
+                Mani Ravindran
+              </a>{' '}
+              (
+              <a
+                href="https://ravindran.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[#EBC385] hover:underline"
+              >
+                ravindran.in
+              </a>
+              )
+            </span>
+            <span aria-hidden="true">·</span>
             <button
+              type="button"
               onClick={() => {
                 playClickSound();
                 setIsPrivacyModalOpen(true);
               }}
-              className="text-slate-400 hover:text-cyan-300 transition-colors cursor-pointer"
+              className="text-[#C9D3D9] hover:text-[#5FD3BF] transition-colors cursor-pointer font-mono"
             >
-              Zero-Data Policy (GDPR/COPPA)
+              Zero-Data Governance (GDPR/COPPA)
             </button>
-            <span aria-hidden="true">·</span>
-            <span>Client-side Zero-Knowledge Sandbox</span>
           </div>
         </div>
       </footer>

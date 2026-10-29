@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Award, Flame, AlertOctagon, CheckCircle2, ChevronRight, Zap, ArrowUpRight, Lock, Terminal, Wifi, Mail, MessageSquare, KeyRound } from 'lucide-react';
+import { Shield, Award, Flame, AlertOctagon, CheckCircle2, ChevronRight, ArrowUpRight, Lock, Terminal, Wifi, Mail, MessageSquare, KeyRound } from 'lucide-react';
 import { UserStats, BreachIncident, SimulationType } from '../types';
 import { BADGES } from '../data/badges';
 import { calculateRankAndLevel } from '../utils/storage';
@@ -33,183 +33,196 @@ export const Dashboard: React.FC<DashboardProps> = ({
     category: string;
     masteryKey: keyof typeof stats.categoryMastery;
     icon: React.ReactNode;
-    color: string;
+    codeRef: string;
     description: string;
   }[] = [
     {
       type: 'phishing',
       title: 'Email & Quishing Defense',
-      category: 'Phishing',
+      category: 'Phishing & OAuth',
       masteryKey: 'phishing',
-      icon: <Mail className="w-5 h-5 text-cyan-400" />,
-      color: 'border-cyan-500/30',
-      description: 'Analyze disguised headers, typosquatted links, and malicious QR codes.',
+      icon: <Mail className="w-4 h-4 text-[#0E2238]" />,
+      codeRef: 'MOD-01',
+      description: 'Analyze disguised envelope headers, typosquatted links, and malicious QR payloads.',
     },
     {
       type: 'wifi',
       title: 'Rogue Wi-Fi & Hotspots',
-      category: 'Network',
+      category: 'Network Airspace',
       masteryKey: 'network',
-      icon: <Wifi className="w-5 h-5 text-emerald-400" />,
-      color: 'border-emerald-500/30',
-      description: 'Probe public Wi-Fi access points and detect Evil Twin man-in-the-middle attacks.',
+      icon: <Wifi className="w-4 h-4 text-[#0E2238]" />,
+      codeRef: 'MOD-02',
+      description: 'Probe public Wi-Fi access points and detect Evil Twin man-in-the-middle interception.',
     },
     {
       type: 'social_eng',
       title: 'Social Engineering DMs',
-      category: 'Social Engineering',
+      category: 'Identity & OTP',
       masteryKey: 'socialEng',
-      icon: <MessageSquare className="w-5 h-5 text-purple-400" />,
-      color: 'border-purple-500/30',
-      description: 'Outsmart impersonator bots and fake friends begging for 2FA verification codes.',
+      icon: <MessageSquare className="w-4 h-4 text-[#0E2238]" />,
+      codeRef: 'MOD-03',
+      description: 'Outsmart impersonator bots and compromised peers requesting 2FA verification codes.',
     },
     {
       type: 'password',
       title: 'Password Entropy Lab',
-      category: 'Credentials',
+      category: 'Cryptographic Strength',
       masteryKey: 'passwords',
-      icon: <KeyRound className="w-5 h-5 text-amber-400" />,
-      color: 'border-amber-500/30',
-      description: 'Test password crack times against 350-billion hash GPU clusters and build passphrases.',
+      icon: <KeyRound className="w-4 h-4 text-[#0E2238]" />,
+      codeRef: 'MOD-04',
+      description: 'Evaluate password crack resistance against 350B-hash/sec GPU rigs and formulate passphrases.',
     },
     {
       type: 'ransomware',
-      title: 'Ransomware Emergency Triage',
+      title: 'Ransomware Incident Triage',
       category: 'Incident Response',
       masteryKey: 'incidentResponse',
-      icon: <Terminal className="w-5 h-5 text-red-400" />,
-      color: 'border-red-500/30',
-      description: '45-second high pressure drill: Isolate network cables and kill rogue encryptors.',
+      icon: <Terminal className="w-4 h-4 text-[#0E2238]" />,
+      codeRef: 'MOD-05',
+      description: '45-second containment drill: Isolate network interfaces and terminate rogue encryptor binaries.',
     },
   ];
 
   return (
     <div className="space-y-8">
-      {/* Hero Overview Strip */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
-        {/* Main Guardian Rank Card */}
-        <div className="md:col-span-8 p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 relative overflow-hidden flex flex-col justify-between shadow-xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl -z-10 pointer-events-none" />
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-3.5">
-              <div className="w-13 h-13 rounded-2xl bg-cyan-950/80 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
-                <Shield className="w-7 h-7" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider">
-                  <span>Level {rankInfo.level} Cyber Guardian</span>
-                  <span aria-hidden="true">·</span>
-                  <span>Zero-Knowledge Profile</span>
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                  {rankInfo.rankTitle}
+      {/* Executive Command Panel matching Postrix (.xh-panel) */}
+      <section className="xh-panel">
+        <div className="xh-kicker">
+          <span className="k">Human Cyber Defense Posture & Interactive Threat Governance</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="tag">Level {rankInfo.level} · {rankInfo.rankTitle}</span>
+            <span className="tag">{stats.streakDays}d Active Streak</span>
+            <span className="tag">Zero-Knowledge Sandbox</span>
+          </div>
+        </div>
+
+        {/* Identity & Posture Summary Row */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pt-5 pb-6 border-b border-[#C9D3D9]/12">
+          <div className="flex items-start sm:items-center gap-4">
+            <div className="rm-mono-mark !w-12 !h-12 !text-base shrink-0" aria-hidden="true">
+              RM
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="text-xl sm:text-2xl font-semibold text-[#EEF3F1] tracking-tight font-serif">
+                  {rankInfo.rankTitle} — Personal Security Posture
                 </h1>
               </div>
-            </div>
-
-            <div className="flex items-center gap-2 self-start sm:self-auto">
-              <div className="px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1.5">
-                <Flame className="w-4 h-4 text-amber-400" />
-                <span>{stats.streakDays} Day Cyber Streak</span>
-              </div>
+              <p className="text-xs sm:text-sm text-[#A9B7BF] mt-1 max-w-2xl leading-relaxed">
+                Continuous interactive threat simulation, MITRE ATT&amp;CK forensic post-mortems, and client-side zero-data telemetry engineered by{' '}
+                <a
+                  href="https://ravindran.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#5FD3BF] hover:underline font-mono"
+                >
+                  Mani Ravindran (ravindran.in)
+                </a>
+                .
+              </p>
             </div>
           </div>
 
-          {/* XP Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">
-                Experience: <strong className="text-slate-200 font-mono tabular-nums">{stats.xp} XP</strong>
-              </span>
-              <span className="text-slate-400">
-                Next Rank: <span className="font-mono tabular-nums text-cyan-300">{rankInfo.nextLevelXp} XP</span> ({progressPercent}%)
-              </span>
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                playClickSound();
+                onOpenPrivacy();
+              }}
+              className="xh-btn"
+            >
+              <Lock className="w-3.5 h-3.5 text-[#5FD3BF]" />
+              <span>Zero-Data Governance</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                playClickSound();
+                onLaunchSimulation('phishing');
+              }}
+              className="xh-btn primary"
+            >
+              <Shield className="w-4 h-4" />
+              <span>Run Live Posture Drill</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 4-Column Postrix Metric Strip (.xh-metric) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-5">
+          <div className="xh-metric">
+            <div className="lbl">
+              <span>OVERALL POSTURE SCORE</span>
+              <Shield className="w-3.5 h-3.5" />
             </div>
-            <div className="w-full h-3 bg-slate-950 rounded-full border border-slate-800 overflow-hidden">
+            <div className="num tabular-nums">
+              {stats.defenseScore}% <span className="text-xs font-normal text-[#5FD3BF]">Grade {stats.defenseScore >= 85 ? 'A' : stats.defenseScore >= 70 ? 'B+' : 'C'}</span>
+            </div>
+            <div className="text-[11px] text-[#A9B7BF] mt-1.5 font-mono">
+              Target Baseline: 70% Resilience
+            </div>
+          </div>
+
+          <div className="xh-metric">
+            <div className="lbl">
+              <span>EXPERIENCE & RANK</span>
+              <Flame className="w-3.5 h-3.5 text-[#EBC385]" />
+            </div>
+            <div className="num tabular-nums">
+              {stats.xp} <span className="text-sm font-normal text-[#A9B7BF]">/ {rankInfo.nextLevelXp} XP</span>
+            </div>
+            <div className="w-full h-1.5 bg-[#081420] rounded-full overflow-hidden mt-2.5 border border-[#C9D3D9]/15">
               <div
-                className="h-full bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 transition-all duration-500"
+                className="h-full bg-[#2BB5A0] transition-all duration-300"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
           </div>
 
-          {/* Submetrics row */}
-          <div className="grid grid-cols-3 gap-3 pt-6 mt-6 border-t border-slate-800/80 text-center">
-            <div>
-              <div className="text-xs text-slate-400 mb-0.5">Overall Defense</div>
-              <div className="text-lg sm:text-xl font-bold font-mono text-cyan-400 tabular-nums">
-                {stats.defenseScore}%
-              </div>
+          <div className="xh-metric">
+            <div className="lbl">
+              <span>SIMULATIONS COMPLETED</span>
+              <CheckCircle2 className="w-3.5 h-3.5" />
             </div>
-            <div>
-              <div className="text-xs text-slate-400 mb-0.5">Drills Passed</div>
-              <div className="text-lg sm:text-xl font-bold font-mono text-white tabular-nums">
-                {stats.simulationsCompleted}
-              </div>
+            <div className="num tabular-nums">
+              {stats.simulationsCompleted} <span className="text-xs font-normal text-[#5FD3BF]">Drills Verified</span>
             </div>
-            <div>
-              <div className="text-xs text-slate-400 mb-0.5">Breaches Blocked</div>
-              <div className="text-lg sm:text-xl font-bold font-mono text-emerald-400 tabular-nums">
-                {Math.max(1, stats.simulationsCompleted * 2 - stats.breachesTriggered)}
-              </div>
+            <div className="text-[11px] text-[#A9B7BF] mt-1.5 font-mono">
+              {stats.unlockedBadgeIds.length} of {BADGES.length} Certifications Earned
+            </div>
+          </div>
+
+          <div className="xh-metric">
+            <div className="lbl">
+              <span>BREACHES MITIGATED</span>
+              <AlertOctagon className="w-3.5 h-3.5 text-[#EBC385]" />
+            </div>
+            <div className="num tabular-nums">
+              {Math.max(1, stats.simulationsCompleted * 2 - stats.breachesTriggered)}{' '}
+              <span className="text-xs font-normal text-[#EBC385]">({stats.breachesTriggered} Incidents)</span>
+            </div>
+            <div className="text-[11px] text-[#A9B7BF] mt-1.5 font-mono">
+              MITRE ATT&amp;CK Post-Mortems Active
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Zero-Data Privacy & Security Guarantee Card */}
-        <div className="md:col-span-4 p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between shadow-xl">
+      {/* 01 / Competency Matrix across 5 Security Domains */}
+      <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#D9DDD3]">
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-400">
-                <Lock className="w-5 h-5" />
-              </div>
-              <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/60">
-                CLIENT-SIDE ONLY
-              </span>
-            </div>
-            <h3 className="text-base font-bold text-white mb-2">
-              Zero-Data Retention Standards
-            </h3>
-            <p className="text-xs text-slate-300 leading-relaxed mb-4">
-              Your security drills, test passwords, and telemetry never leave your device. 100% compliant with GDPR, CCPA, and COPPA youth privacy regulations.
+            <span className="rm-kicker">01 / Multi-Vector Control Coverage</span>
+            <h2 className="text-lg font-semibold text-[#0E2238]">
+              Cybersecurity Domain Competency Matrix
+            </h2>
+            <p className="text-xs text-[#4B5A66] mt-0.5">
+              Evaluated defense readiness across phishing, wireless airspace, identity verification, cryptography, and incident response.
             </p>
           </div>
-
-          <div className="pt-4 border-t border-slate-800 space-y-2">
-            <button
-              onClick={() => {
-                playClickSound();
-                onOpenPrivacy();
-              }}
-              className="w-full py-2 px-3 text-xs font-semibold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-750 border border-slate-750 rounded-xl transition-colors cursor-pointer flex items-center justify-between"
-            >
-              <span>View Privacy Radar & Shredder</span>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Weekly Threat Resilience Trend Chart */}
-      <ThreatResilienceChart
-        data={stats.sessionHistory || []}
-        currentScore={stats.defenseScore}
-      />
-
-      {/* Category Mastery Meters */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-          <div>
-            <h3 className="text-base font-bold text-white">
-              Cybersecurity Competency Radar
-            </h3>
-            <p className="text-xs text-slate-400">
-              Mastery scores across critical youth threat vectors.
-            </p>
-          </div>
-          <span className="text-xs font-mono text-cyan-400">
-            5 Domains Monitored
+          <span className="text-xs font-mono text-[#0E2238] bg-[#F3F5F1] border border-[#C7CDC0] px-2.5 py-1 rounded">
+            5 Control Domains Monitored
           </span>
         </div>
 
@@ -217,14 +230,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
           {simulationCards.map((sim) => {
             const mastery = stats.categoryMastery[sim.masteryKey];
             return (
-              <div key={sim.type} className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 space-y-2">
+              <div key={sim.type} className="p-4 rounded-lg bg-[#F3F5F1] border border-[#D9DDD3] space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-slate-300 truncate">{sim.category}</span>
-                  <span className="font-mono font-bold text-cyan-300 tabular-nums">{mastery}%</span>
+                  <span className="font-mono text-[11px] text-[#4B5A66]">{sim.codeRef}</span>
+                  <span className="font-mono font-semibold text-[#0E2238] tabular-nums">{mastery}%</span>
                 </div>
-                <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div className="text-xs font-semibold text-[#16232F] truncate">
+                  {sim.category}
+                </div>
+                <div className="w-full h-1.5 bg-[#D9DDD3] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-cyan-400 rounded-full"
+                    className="h-full bg-[#0E2238] rounded-full"
                     style={{ width: `${mastery}%` }}
                   />
                 </div>
@@ -232,17 +248,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
             );
           })}
         </div>
-      </div>
+      </section>
 
-      {/* Interactive Simulations Quick Launch Grid */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between px-1">
+      {/* 02 / Weekly Threat Resilience Trend Chart */}
+      <ThreatResilienceChart
+        data={stats.sessionHistory || []}
+        currentScore={stats.defenseScore}
+      />
+
+      {/* 03 / Interactive Defense Sandboxes */}
+      <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#D9DDD3]">
           <div>
-            <h3 className="text-lg font-bold text-white">
-              Interactive Defense Sandboxes
-            </h3>
-            <p className="text-xs text-slate-400">
-              Engage in hands-on scenarios to detect traps, investigate anomalies, and build real-world immunity.
+            <span className="rm-kicker">03 / Interactive Assessment Modules</span>
+            <h2 className="text-lg font-semibold text-[#0E2238]">
+              Live Threat Simulation & Defense Sandboxes
+            </h2>
+            <p className="text-xs text-[#4B5A66] mt-0.5">
+              Execute hands-on threat scenarios to inspect indicators, verify headers, and harden defensive reflexes.
             </p>
           </div>
         </div>
@@ -251,67 +274,65 @@ export const Dashboard: React.FC<DashboardProps> = ({
           {simulationCards.map((sim) => (
             <div
               key={sim.type}
-              className={`p-5 rounded-2xl bg-slate-900 border ${sim.color} hover:border-cyan-500/60 transition-all flex flex-col justify-between group shadow-lg`}
+              className="p-5 rounded-xl bg-[#F3F5F1] border border-[#C7CDC0] hover:border-[#0E2238] transition-all flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                  <div className="p-2 rounded-lg bg-white border border-[#D9DDD3] flex items-center gap-2">
                     {sim.icon}
+                    <span className="text-[11px] font-mono font-medium text-[#0E2238]">{sim.codeRef}</span>
                   </div>
-                  <span className="text-xs font-mono text-slate-400">
-                    {stats.categoryMastery[sim.masteryKey]}% Mastered
+                  <span className="text-xs font-mono font-medium text-[#4B5A66] tabular-nums">
+                    {stats.categoryMastery[sim.masteryKey]}% Mastery
                   </span>
                 </div>
-                <h4 className="text-base font-bold text-white mb-1.5 group-hover:text-cyan-300 transition-colors">
+                <h3 className="text-base font-semibold text-[#0E2238] mb-1.5">
                   {sim.title}
-                </h4>
-                <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                </h3>
+                <p className="text-xs text-[#4B5A66] leading-relaxed mb-5">
                   {sim.description}
                 </p>
               </div>
 
               <button
+                type="button"
                 onClick={() => {
                   playClickSound();
                   onLaunchSimulation(sim.type);
                 }}
-                className="w-full py-2.5 px-4 bg-slate-950 group-hover:bg-cyan-950/80 border border-slate-800 group-hover:border-cyan-600/60 text-slate-200 group-hover:text-cyan-300 rounded-xl text-xs font-semibold transition-all flex items-center justify-between cursor-pointer"
+                className="w-full py-2.5 px-4 bg-[#0E2238] hover:bg-[#081420] text-[#F3F5F1] rounded-lg text-xs font-medium transition-colors flex items-center justify-between cursor-pointer"
               >
-                <span>Launch Interactive Drill</span>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
+                <span>Execute Simulation Drill</span>
+                <ChevronRight className="w-4 h-4 text-[#5FD3BF] group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Forensic Incident Post-Mortem Log */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-red-950/60 text-red-400 border border-red-500/30">
-              <AlertOctagon className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-white">
-                Forensic Incident & Breach Post-Mortem Log
-              </h3>
-              <p className="text-xs text-slate-400">
-                Learn from past simulated compromises with immediate actionable remediation tips.
-              </p>
-            </div>
+      {/* 04 / Forensic Incident & Breach Post-Mortem Ledger */}
+      <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#D9DDD3]">
+          <div>
+            <span className="rm-kicker">04 / Vulnerability Triage & Forensic Ledger</span>
+            <h2 className="text-lg font-semibold text-[#0E2238]">
+              Breach Post-Mortem & Defensive Remediation Runbooks
+            </h2>
+            <p className="text-xs text-[#4B5A66] mt-0.5">
+              Detailed root-cause diagnostics, missed indicator analysis, and actionable remediation steps for triggered compromises.
+            </p>
           </div>
-          <span className="text-xs font-mono text-slate-400">
-            {incidents.length} Incidents Recorded
+          <span className="text-xs font-mono text-[#16232F] bg-[#F3F5F1] border border-[#C7CDC0] px-2.5 py-1 rounded">
+            {incidents.length} Logged Findings
           </span>
         </div>
 
         {incidents.length === 0 ? (
-          <div className="p-8 text-center bg-slate-950 rounded-xl border border-slate-800/80">
-            <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-            <p className="text-sm font-semibold text-slate-200">No Security Breaches on Record</p>
-            <p className="text-xs text-slate-400 mt-1">
-              Your defenses are currently intact! Run a drill above to test your threat resistance.
+          <div className="p-8 text-center bg-[#F3F5F1] rounded-xl border border-[#D9DDD3]">
+            <CheckCircle2 className="w-8 h-8 text-emerald-700 mx-auto mb-2" />
+            <p className="text-sm font-semibold text-[#0E2238]">Zero Unresolved Security Breaches</p>
+            <p className="text-xs text-[#4B5A66] mt-1">
+              Your defensive posture is intact. Launch a simulation drill above to test resilience against emerging vectors.
             </p>
           </div>
         ) : (
@@ -319,21 +340,26 @@ export const Dashboard: React.FC<DashboardProps> = ({
             {incidents.map((inc) => (
               <div
                 key={inc.id}
-                className="p-4 rounded-xl bg-slate-950 border border-slate-800/80 hover:border-slate-700 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                className="p-4 rounded-xl bg-[#F3F5F1] border border-[#C7CDC0] hover:border-[#0E2238] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-red-400 font-mono">
-                      [BREACH]
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-mono font-semibold text-red-800 bg-red-100 border border-red-200 px-2 py-0.5 rounded">
+                      COMPROMISE RECORD
                     </span>
-                    <h4 className="text-sm font-bold text-white">
+                    {inc.mitreRef && (
+                      <span className="text-[11px] font-mono text-[#0E2238] bg-white border border-[#C7CDC0] px-2 py-0.5 rounded">
+                        {inc.mitreRef}
+                      </span>
+                    )}
+                    <h4 className="text-sm font-semibold text-[#0E2238]">
                       {inc.scenarioTitle}
                     </h4>
                   </div>
-                  <p className="text-xs text-slate-300">
+                  <p className="text-xs text-[#16232F]">
                     {inc.userMistake}
                   </p>
-                  <div className="flex items-center gap-3 text-[11px] text-slate-500 font-mono pt-1">
+                  <div className="flex items-center gap-3 text-[11px] text-[#4B5A66] font-mono pt-1">
                     <span>Vector: {inc.category}</span>
                     <span>·</span>
                     <span>{inc.timestamp}</span>
@@ -342,13 +368,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
                 <div className="flex items-center gap-2 shrink-0">
                   <button
+                    type="button"
                     onClick={() => {
                       playClickSound();
                       onOpenBreachDetails(inc);
                     }}
-                    className="px-3.5 py-1.5 text-xs font-semibold text-cyan-400 hover:text-cyan-300 bg-cyan-950/40 hover:bg-cyan-950/80 border border-cyan-800/50 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
+                    className="px-3.5 py-2 text-xs font-medium text-[#0E2238] hover:text-white bg-white hover:bg-[#0E2238] border border-[#0E2238] rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
                   >
-                    <span>View Post-Mortem</span>
+                    <span>Inspect Remediation Blueprint</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -356,53 +383,55 @@ export const Dashboard: React.FC<DashboardProps> = ({
             ))}
           </div>
         )}
-      </div>
+      </section>
 
-      {/* Gamification Badges Preview */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2.5">
-            <Award className="w-5 h-5 text-amber-400" />
-            <h3 className="text-base font-bold text-white">
-              Unlocked Cyber Badges & Achievements
-            </h3>
+      {/* 05 / Unlocked Cyber Badges & Certifications */}
+      <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#D9DDD3]">
+          <div>
+            <span className="rm-kicker">05 / Verified Defender Credentials</span>
+            <h2 className="text-lg font-semibold text-[#0E2238]">
+              Earned Security Certifications & Badges
+            </h2>
           </div>
-          <span className="text-xs font-mono text-amber-400">
-            {stats.unlockedBadgeIds.length} / {BADGES.length} Badges Earned
+          <span className="text-xs font-mono text-[#0E2238] bg-[#F3F5F1] border border-[#C7CDC0] px-2.5 py-1 rounded">
+            {stats.unlockedBadgeIds.length} / {BADGES.length} Verified
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
           {BADGES.map((badge) => {
             const isUnlocked = stats.unlockedBadgeIds.includes(badge.id);
             return (
               <div
                 key={badge.id}
-                className={`p-3.5 rounded-xl border text-center transition-all ${
+                className={`p-4 rounded-xl border text-left transition-all ${
                   isUnlocked
-                    ? 'bg-slate-950 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.1)]'
-                    : 'bg-slate-950/40 border-slate-800/60 opacity-50'
+                    ? 'bg-[#F3F5F1] border-[#0E2238]'
+                    : 'bg-[#F3F5F1]/60 border-[#D9DDD3] opacity-60'
                 }`}
               >
-                <div className={`w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-2 ${
-                  isUnlocked ? 'bg-amber-950/60 text-amber-400 border border-amber-500/50' : 'bg-slate-900 text-slate-600'
-                }`}>
-                  <Award className="w-5 h-5" />
+                <div className="flex items-center justify-between mb-2.5">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    isUnlocked ? 'bg-[#0E2238] text-[#5FD3BF]' : 'bg-[#E9ECE6] text-[#4B5A66]'
+                  }`}>
+                    <Award className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] font-mono font-medium text-[#4B5A66]">
+                    {isUnlocked ? 'VERIFIED' : `+${badge.xpReward} XP`}
+                  </span>
                 </div>
-                <h5 className="text-xs font-bold text-white truncate mb-0.5">
+                <h4 className="text-xs font-semibold text-[#0E2238] truncate mb-1">
                   {badge.title}
-                </h5>
-                <span className="text-[10px] text-slate-400 line-clamp-2 leading-tight">
+                </h4>
+                <p className="text-[11px] text-[#4B5A66] line-clamp-2 leading-relaxed">
                   {badge.description}
-                </span>
-                <div className="mt-2 text-[10px] font-mono text-cyan-400">
-                  {isUnlocked ? 'UNLOCKED' : `+${badge.xpReward} XP`}
-                </div>
+                </p>
               </div>
             );
           })}
         </div>
-      </div>
+      </section>
     </div>
   );
 };

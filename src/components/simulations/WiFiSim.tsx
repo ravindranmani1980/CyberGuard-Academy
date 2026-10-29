@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Wifi, WifiOff, ShieldCheck, AlertTriangle, Radio, CheckCircle, Lock, Unlock, RefreshCw } from 'lucide-react';
+import { Wifi, ShieldCheck, AlertTriangle, Radio, CheckCircle, Lock, Unlock, RefreshCw } from 'lucide-react';
 import { WIFI_HOTSPOTS, WiFiNetwork } from '../../data/scenarios';
 import { BreachIncident } from '../../types';
 import { playClickSound, playSuccessSound, playBreachAlertSound } from '../../utils/audio';
@@ -34,7 +34,7 @@ export const WiFiSim: React.FC<WiFiSimProps> = ({ onBreach, onSuccess }) => {
     if (network.isMalicious) {
       setMessage({
         type: 'warn',
-        text: `PROBE ALERT: Suspicious telemetry on "${network.ssid}"!`,
+        text: `PROBE ALERT: Suspicious telemetry on "${network.ssid}"`,
         details: network.forensicBreakdown?.redFlags || ['Unencrypted traffic susceptible to packet sniffing.'],
       });
     } else {
@@ -83,7 +83,7 @@ export const WiFiSim: React.FC<WiFiSimProps> = ({ onBreach, onSuccess }) => {
       playSuccessSound();
       setMessage({
         type: 'success',
-        text: `Securely connected to "${network.ssid}"!`,
+        text: `Securely connected to "${network.ssid}"`,
         details: [
           'Traffic is securely encrypted via WPA2-PSK.',
           'Attacker packet sniffers cannot read your sensitive communications.',
@@ -96,23 +96,20 @@ export const WiFiSim: React.FC<WiFiSimProps> = ({ onBreach, onSuccess }) => {
   return (
     <div className="space-y-6">
       {/* Simulation Concept Header */}
-      <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-5 rounded-xl bg-white border border-[#D9DDD3] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-1">
-            <span>Simulation 02</span>
-            <span aria-hidden="true">·</span>
-            <span>Rogue Wi-Fi & Man-In-The-Middle Airspace</span>
-          </div>
-          <h2 className="text-lg font-bold text-white">
-            Public Airspace Triage: Identify Evil Twins & Hotspot Traps
+          <span className="rm-kicker">MOD-02 / Wireless Airspace &amp; MITM Assessment</span>
+          <h2 className="text-lg font-semibold text-[#0E2238]">
+            Public Airspace Triage: Identify Evil Twins &amp; Hotspot Traps
           </h2>
         </div>
         <button
+          type="button"
           onClick={handleScan}
           disabled={isScanning}
-          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
+          className="px-3.5 py-2 bg-[#F3F5F1] hover:bg-[#E9ECE6] text-[#0E2238] border border-[#C7CDC0] rounded-lg text-xs font-mono font-medium flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isScanning ? 'animate-spin text-cyan-300' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${isScanning ? 'animate-spin text-[#2BB5A0]' : ''}`} />
           <span>{isScanning ? 'Scanning Airspace...' : 'Rescan Frequencies'}</span>
         </button>
       </div>
@@ -122,15 +119,15 @@ export const WiFiSim: React.FC<WiFiSimProps> = ({ onBreach, onSuccess }) => {
         {/* Left Column: Discovered Wireless SSIDs */}
         <div className="lg:col-span-6 space-y-3">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Detected Wireless Signals (Downtown Cafe)
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#4B5A66]">
+              Detected Wireless Beacons (Downtown Venue)
             </span>
-            <span className="text-xs font-mono text-cyan-400">
+            <span className="text-xs font-mono text-[#0E2238]">
               {WIFI_HOTSPOTS.length} Channels Monitored
             </span>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {WIFI_HOTSPOTS.map((hotspot) => {
               const isProbed = probedNetworkIds.includes(hotspot.id);
               const isSelected = selectedNetwork.id === hotspot.id;
@@ -139,66 +136,68 @@ export const WiFiSim: React.FC<WiFiSimProps> = ({ onBreach, onSuccess }) => {
               return (
                 <div
                   key={hotspot.id}
-                  className={`p-4 rounded-xl border transition-all ${
+                  className={`p-5 rounded-xl border transition-all ${
                     isSelected
-                      ? 'bg-slate-850 border-cyan-500/60 ring-1 ring-cyan-500/30'
-                      : 'bg-slate-900/80 border-slate-800 hover:bg-slate-850'
+                      ? 'bg-white border-[#0E2238] ring-1 ring-[#0E2238] shadow-xs'
+                      : 'bg-[#F3F5F1] border-[#C7CDC0] hover:bg-white'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2.5">
-                      <div className={`p-2 rounded-lg ${
+                      <div className={`p-2 rounded-lg border ${
                         hotspot.security.includes('Open') || hotspot.security.includes('Captive')
-                          ? 'bg-amber-950/60 text-amber-400 border border-amber-600/30'
-                          : 'bg-emerald-950/60 text-emerald-400 border border-emerald-600/30'
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                       }`}>
                         {hotspot.security.includes('Open') ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <h4 className="text-sm font-semibold text-[#0E2238] flex items-center gap-2 font-mono">
                           <span>{hotspot.ssid}</span>
                           {isConnected && (
-                            <span className="text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-700/60 px-1.5 py-0.5 rounded">
-                              Connected
+                            <span className="text-[10px] bg-[#0E2238] text-[#5FD3BF] px-2 py-0.5 rounded">
+                              ACTIVE
                             </span>
                           )}
                         </h4>
-                        <span className="text-xs text-slate-400">
-                          Security: <strong className="text-slate-300">{hotspot.security}</strong>
+                        <span className="text-xs text-[#4B5A66]">
+                          Security Protocol: <strong className="text-[#16232F]">{hotspot.security}</strong>
                         </span>
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <span className="text-xs font-mono text-slate-400">
+                      <span className="text-xs font-mono text-[#4B5A66] tabular-nums">
                         {hotspot.signalStrength} dBm
                       </span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-300 mb-3">
+                  <p className="text-xs text-[#16232F] mb-3.5 leading-relaxed">
                     {hotspot.description}
                   </p>
 
-                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/80">
+                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-[#D9DDD3]">
                     <button
+                      type="button"
                       onClick={() => handleProbe(hotspot)}
-                      className="px-3 py-1.5 text-xs font-medium text-cyan-400 hover:text-cyan-300 bg-cyan-950/40 hover:bg-cyan-950/80 border border-cyan-800/50 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
+                      className="px-3 py-1.5 text-xs font-mono font-medium text-[#0E2238] bg-[#F3F5F1] hover:bg-[#E9ECE6] border border-[#C7CDC0] rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
                     >
-                      <Radio className="w-3.5 h-3.5" />
-                      <span>{isProbed ? 'Re-Probe Packets' : 'Probe Network Packets'}</span>
+                      <Radio className="w-3.5 h-3.5 text-[#2BB5A0]" />
+                      <span>{isProbed ? 'Re-Probe Beacon' : 'Probe Beacon Packets'}</span>
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => handleConnect(hotspot)}
                       className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
                         isConnected
-                          ? 'bg-slate-800 text-slate-400 cursor-default'
-                          : 'bg-slate-200 hover:bg-white text-slate-950'
+                          ? 'bg-[#E9ECE6] text-[#4B5A66] cursor-default'
+                          : 'bg-[#0E2238] hover:bg-[#081420] text-[#F3F5F1]'
                       }`}
                     >
-                      <Wifi className="w-3.5 h-3.5" />
-                      <span>{isConnected ? 'Active Network' : 'Connect'}</span>
+                      <Wifi className="w-3.5 h-3.5 text-[#5FD3BF]" />
+                      <span>{isConnected ? 'Active Session' : 'Connect'}</span>
                     </button>
                   </div>
                 </div>
@@ -209,54 +208,58 @@ export const WiFiSim: React.FC<WiFiSimProps> = ({ onBreach, onSuccess }) => {
 
         {/* Right Column: Deep Packet & Gateway Telemetry */}
         <div className="lg:col-span-6 space-y-4">
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-cyan-400" />
-                <span>Spectrum Telemetry: {selectedNetwork.ssid}</span>
-              </h3>
-              <span className={`text-xs px-2 py-0.5 rounded font-mono ${
+          <div className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#D9DDD3] pb-3.5">
+              <div>
+                <span className="rm-kicker">Beacon Inspection Console</span>
+                <h3 className="text-sm font-semibold text-[#0E2238] flex items-center gap-2 font-mono">
+                  <ShieldCheck className="w-4 h-4 text-[#2BB5A0]" />
+                  <span>{selectedNetwork.ssid}</span>
+                </h3>
+              </div>
+              <span className={`text-xs px-2.5 py-1 rounded font-mono font-medium ${
                 selectedNetwork.isMalicious
-                  ? 'bg-red-950/80 text-red-400 border border-red-800'
-                  : 'bg-emerald-950/80 text-emerald-400 border border-emerald-800'
+                  ? 'bg-red-50 text-red-800 border border-red-200'
+                  : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
               }`}>
                 {selectedNetwork.isMalicious ? 'THREAT ANOMALY' : 'AUTHENTIC BEACON'}
               </span>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div className="p-3 bg-slate-950 rounded-lg border border-slate-800/80 space-y-1.5 font-mono text-[11px]">
+            <div className="space-y-3.5 text-xs">
+              {/* Dark telemetry card matching Postrix */}
+              <div className="p-4 bg-[#081420] rounded-lg border border-[#3E6E86]/40 space-y-2 font-mono text-[11px] text-[#EEF3F1]">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Gateway MAC Address:</span>
-                  <span className={selectedNetwork.gatewayMac.includes('Pineapple') ? 'text-red-400 font-bold' : 'text-slate-300'}>
+                  <span className="text-[#A9B7BF]">Gateway BSSID / Vendor:</span>
+                  <span className={selectedNetwork.gatewayMac.includes('Pineapple') ? 'text-[#EBC385] font-semibold' : 'text-[#EEF3F1]'}>
                     {selectedNetwork.gatewayMac}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">SSL Inspection Intercept:</span>
-                  <span className={selectedNetwork.sslInspectionActive ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
-                    {selectedNetwork.sslInspectionActive ? 'DETECTED (Self-signed Root CA injected)' : 'NONE (Pure TLS 1.3)'}
+                  <span className="text-[#A9B7BF]">TLS / SSL Inspection:</span>
+                  <span className={selectedNetwork.sslInspectionActive ? 'text-[#EBC385] font-semibold' : 'text-[#5FD3BF]'}>
+                    {selectedNetwork.sslInspectionActive ? 'INTERCEPTED (Self-signed Root CA)' : 'NOMINAL (Pure TLS 1.3)'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">DNS Response Integrity:</span>
-                  <span className={selectedNetwork.dnsHijacking ? 'text-red-400 font-bold' : 'text-emerald-400'}>
-                    {selectedNetwork.dnsHijacking ? 'SPOOFED (Local 192.168.1.1 Captive Redirection)' : 'VERIFIED (DoH / Cloudflare 1.1.1.1)'}
+                  <span className="text-[#A9B7BF]">DNS Resolution Path:</span>
+                  <span className={selectedNetwork.dnsHijacking ? 'text-red-400 font-semibold' : 'text-[#5FD3BF]'}>
+                    {selectedNetwork.dnsHijacking ? 'SPOOFED (Local Captive Redirect)' : 'VERIFIED (DoH / 1.1.1.1)'}
                   </span>
                 </div>
               </div>
 
               {message && (
-                <div className={`p-3.5 rounded-xl border ${
+                <div className={`p-4 rounded-lg border ${
                   message.type === 'warn'
-                    ? 'bg-amber-950/30 border-amber-500/30 text-amber-200'
-                    : 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'
+                    ? 'bg-amber-50 border-amber-200 text-amber-950'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-950'
                 }`}>
                   <h5 className="font-bold text-xs mb-1 flex items-center gap-1.5">
-                    {message.type === 'warn' ? <AlertTriangle className="w-4 h-4 text-amber-400" /> : <CheckCircle className="w-4 h-4 text-emerald-400" />}
+                    {message.type === 'warn' ? <AlertTriangle className="w-4 h-4 text-amber-700" /> : <CheckCircle className="w-4 h-4 text-emerald-700" />}
                     <span>{message.text}</span>
                   </h5>
-                  <ul className="mt-2 space-y-1 text-[11px] text-slate-300">
+                  <ul className="mt-2 space-y-1 text-xs">
                     {message.details.map((detail, idx) => (
                       <li key={idx}>• {detail}</li>
                     ))}
@@ -265,12 +268,12 @@ export const WiFiSim: React.FC<WiFiSimProps> = ({ onBreach, onSuccess }) => {
               )}
 
               {/* Actionable Defense Checklist for Public Wi-Fi */}
-              <div className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 space-y-2 text-xs">
-                <span className="font-semibold text-slate-300">Youth Wi-Fi Safety Rulebook:</span>
-                <ul className="space-y-1.5 text-slate-400 text-[11px]">
-                  <li>• <strong className="text-slate-300">Open ≠ Free:</strong> Anyone can spin up a router named "Campus_Free_WiFi" for $40.</li>
-                  <li>• <strong className="text-slate-300">HTTPS is not infallible:</strong> Evil twins can execute SSL-strip attacks to downgrade your connections.</li>
-                  <li>• <strong className="text-slate-300">Cellular tethering:</strong> When submitting exams or logging into bank apps, always tether to your mobile 5G data.</li>
+              <div className="p-4 bg-[#F3F5F1] rounded-lg border border-[#D9DDD3] space-y-2 text-xs">
+                <span className="font-semibold text-[#0E2238] block">Wireless Posture Hardening Blueprint:</span>
+                <ul className="space-y-1.5 text-[#4B5A66] text-xs leading-relaxed">
+                  <li>• <strong className="text-[#16232F]">Open ≠ Trusted:</strong> Commodity rogue access points can broadcast any SSID name in seconds.</li>
+                  <li>• <strong className="text-[#16232F]">Never Install Captive Certificates:</strong> Reject any public network prompting for root certificate installation.</li>
+                  <li>• <strong className="text-[#16232F]">Cellular Tethering:</strong> Prefer 5G personal hotspots or WireGuard VPN tunnels when handling sensitive sessions.</li>
                 </ul>
               </div>
             </div>

@@ -31,13 +31,13 @@ export const PHISHING_EMAILS: PhishingEmail[] = [
     subject: '🎁 You received 3 Months of Discord Nitro Free!',
     timestamp: 'Today, 2:14 PM',
     bodyHtml: `
-      <p class="font-medium text-slate-150 mb-3">Hey Gamer,</p>
-      <p class="mb-3">You've been selected as part of our Summer Partner celebration! Claim 3 Months of Discord Nitro with 2 Server Boosts absolutely free.</p>
-      <p class="text-amber-300 font-semibold mb-4">⚠️ Expires in 24 hours. Only 50 claims remaining!</p>
-      <div class="p-4 bg-slate-900/80 rounded-lg border border-slate-700/60 text-center my-4">
-        <p class="text-xs text-slate-400 mb-2">Scan with your mobile camera or click below to link your Discord account:</p>
-        <div class="inline-block p-2 bg-white rounded-md mx-auto mb-3 shadow-inner">
-          <svg class="w-32 h-32 text-slate-900" viewBox="0 0 100 100" fill="currentColor">
+      <p class="font-semibold text-[#0E2238] mb-3">Hey Gamer,</p>
+      <p class="mb-3 text-[#16232F]">You've been selected as part of our Summer Partner celebration! Claim 3 Months of Discord Nitro with 2 Server Boosts absolutely free.</p>
+      <p class="text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-md font-semibold mb-4 inline-block text-xs">⚠️ Expires in 24 hours. Only 50 claims remaining!</p>
+      <div class="p-4 bg-[#F3F5F1] rounded-lg border border-[#C7CDC0] text-center my-4">
+        <p class="text-xs text-[#4B5A66] mb-2">Scan with your mobile camera or click below to link your Discord account:</p>
+        <div class="inline-block p-2 bg-white border border-[#D9DDD3] rounded-md mx-auto mb-3 shadow-xs">
+          <svg class="w-32 h-32 text-[#081420]" viewBox="0 0 100 100" fill="currentColor">
             <rect x="10" y="10" width="25" height="25" fill="black"/>
             <rect x="15" y="15" width="15" height="15" fill="white"/>
             <rect x="18" y="18" width="9" height="9" fill="black"/>
@@ -54,11 +54,11 @@ export const PHISHING_EMAILS: PhishingEmail[] = [
           </svg>
         </div>
         <br />
-        <a href="#claim" class="phish-link inline-block px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm rounded-md transition-colors shadow-lg">
+        <a href="#claim" class="phish-link inline-block px-5 py-2.5 bg-[#0E2238] hover:bg-[#081420] text-[#F3F5F1] font-semibold text-xs rounded-md transition-colors">
           Claim Nitro Gift Now
         </a>
       </div>
-      <p class="text-xs text-slate-400">Discord Inc. 444 De Haro St #51, San Francisco, CA</p>
+      <p class="text-xs text-[#4B5A66]">Discord Inc. 444 De Haro St #51, San Francisco, CA</p>
     `,
     hasAttachment: false,
     attachmentSuspicious: false,
@@ -90,17 +90,17 @@ export const PHISHING_EMAILS: PhishingEmail[] = [
     subject: 'URGENT: Outstanding Fall Tuition Refund ($1,420.00)',
     timestamp: 'Yesterday, 9:30 AM',
     bodyHtml: `
-      <p class="font-medium text-slate-150 mb-3">Attention Student,</p>
-      <p class="mb-3">Our records indicate an uncollected overpayment refund of <strong>$1,420.00</strong> on your student bursar account for the current semester.</p>
-      <p class="mb-3">Due to institutional audit deadlines, this refund must be claimed within <strong>48 hours</strong> or the funds will be forfeited back to state auxiliary balances.</p>
-      <div class="my-4 p-3 bg-slate-900 border border-slate-700 rounded-md">
-        <p class="text-xs text-slate-400 mb-1">Attached documentation:</p>
-        <div class="flex items-center gap-3 text-sm text-cyan-300 font-mono">
+      <p class="font-semibold text-[#0E2238] mb-3">Attention Student,</p>
+      <p class="mb-3 text-[#16232F]">Our records indicate an uncollected overpayment refund of <strong>$1,420.00</strong> on your student bursar account for the current semester.</p>
+      <p class="mb-3 text-[#16232F]">Due to institutional audit deadlines, this refund must be claimed within <strong>48 hours</strong> or the funds will be forfeited back to state auxiliary balances.</p>
+      <div class="my-4 p-3.5 bg-[#081420] border border-[#3E6E86]/40 rounded-lg">
+        <p class="text-xs text-[#A9B7BF] mb-1">Attached documentation:</p>
+        <div class="flex items-center gap-3 text-sm text-[#5FD3BF] font-mono">
           <span>📄 Refund_DirectDeposit_Authorization.pdf.exe (842 KB)</span>
         </div>
       </div>
-      <p class="mb-4">Please download, fill, and submit the attached electronic form immediately to authorize direct deposit.</p>
-      <p class="text-xs text-slate-400">Office of the Bursar & Financial Aid Operations</p>
+      <p class="mb-4 text-[#16232F]">Please download, fill, and submit the attached electronic form immediately to authorize direct deposit.</p>
+      <p class="text-xs text-[#4B5A66]">Office of the Bursar & Financial Aid Operations</p>
     `,
     hasAttachment: true,
     attachmentName: 'Refund_DirectDeposit_Authorization.pdf.exe',
@@ -130,10 +130,10 @@ export const PHISHING_EMAILS: PhishingEmail[] = [
     subject: 'Scheduled Library Wi-Fi Maintenance (Friday 11 PM)',
     timestamp: 'Oct 23, 11:15 AM',
     bodyHtml: `
-      <p class="font-medium text-slate-150 mb-3">Campus Community,</p>
-      <p class="mb-3">Please be advised that the central library wireless access points will undergo planned firmware upgrades this Friday between 11:00 PM and 1:00 AM.</p>
-      <p class="mb-3">During this window, wireless connectivity may experience brief 5-minute interruptions. No action is required on your part. Your login credentials will remain unchanged.</p>
-      <p class="text-xs text-slate-400">Campus IT & Infrastructure Services · Help Desk: ext 4357</p>
+      <p class="font-semibold text-[#0E2238] mb-3">Campus Community,</p>
+      <p class="mb-3 text-[#16232F]">Please be advised that the central library wireless access points will undergo planned firmware upgrades this Friday between 11:00 PM and 1:00 AM.</p>
+      <p class="mb-3 text-[#16232F]">During this window, wireless connectivity may experience brief 5-minute interruptions. No action is required on your part. Your login credentials will remain unchanged.</p>
+      <p class="text-xs text-[#4B5A66]">Campus IT & Infrastructure Services · Help Desk: ext 4357</p>
     `,
     hasAttachment: false,
     attachmentSuspicious: false,

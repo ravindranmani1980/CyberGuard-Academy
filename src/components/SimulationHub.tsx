@@ -21,12 +21,12 @@ export const SimulationHub: React.FC<SimulationHubProps> = ({
 }) => {
   const [activeSim, setActiveSim] = useState<SimulationType>(initialSim);
 
-  const tabs: { id: SimulationType; label: string; icon: React.ReactNode; category: string }[] = [
-    { id: 'phishing', label: 'Email & Quishing', icon: <Mail className="w-4 h-4" />, category: 'Phishing' },
-    { id: 'wifi', label: 'Rogue Wi-Fi & MITM', icon: <Wifi className="w-4 h-4" />, category: 'Networks' },
-    { id: 'social_eng', label: 'Social Engineering DMs', icon: <MessageSquare className="w-4 h-4" />, category: 'Social' },
-    { id: 'password', label: 'Password Entropy Lab', icon: <KeyRound className="w-4 h-4" />, category: 'Credentials' },
-    { id: 'ransomware', label: 'Ransomware Triage', icon: <Terminal className="w-4 h-4" />, category: 'Response' },
+  const tabs: { id: SimulationType; label: string; icon: React.ReactNode; code: string }[] = [
+    { id: 'phishing', label: 'Email & Quishing', icon: <Mail className="w-4 h-4" />, code: 'MOD-01' },
+    { id: 'wifi', label: 'Rogue Wi-Fi & MITM', icon: <Wifi className="w-4 h-4" />, code: 'MOD-02' },
+    { id: 'social_eng', label: 'Social Engineering DMs', icon: <MessageSquare className="w-4 h-4" />, code: 'MOD-03' },
+    { id: 'password', label: 'Password Entropy Lab', icon: <KeyRound className="w-4 h-4" />, code: 'MOD-04' },
+    { id: 'ransomware', label: 'Ransomware Triage', icon: <Terminal className="w-4 h-4" />, code: 'MOD-05' },
   ];
 
   const handleTabChange = (simId: SimulationType) => {
@@ -36,28 +36,45 @@ export const SimulationHub: React.FC<SimulationHubProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Simulation Selector Bar */}
-      <div className="flex items-center gap-2 p-1.5 bg-slate-900 border border-slate-800 rounded-xl overflow-x-auto">
-        {tabs.map((tab) => {
-          const isActive = activeSim === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => handleTabChange(tab.id)}
-              className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer shrink-0 ${
-                isActive
-                  ? 'bg-gradient-to-r from-cyan-950 to-slate-900 text-cyan-400 border border-cyan-500/50 shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-              }`}
-            >
-              <span className={isActive ? 'text-cyan-400' : 'text-slate-500'}>
+      {/* Postrix Command Header for Interactive Simulations */}
+      <section className="xh-panel">
+        <div className="xh-kicker">
+          <span className="k">Interactive Security Posture & Threat Simulation Suite</span>
+          <span className="tag">5 Live Assessment Modules</span>
+        </div>
+
+        <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-lg sm:text-xl font-semibold text-[#EEF3F1] font-serif">
+              Hands-On Threat Evaluation & Defensive Triage Lab
+            </h1>
+            <p className="text-xs text-[#A9B7BF] mt-0.5">
+              Select a simulation module below to inspect real-world attack artifacts, verify technical telemetry, and test breach resilience.
+            </p>
+          </div>
+        </div>
+
+        {/* Module Selector Bar inside xh-panel */}
+        <div className="flex items-center gap-2 pt-4 mt-4 border-t border-[#C9D3D9]/15 overflow-x-auto">
+          {tabs.map((tab) => {
+            const isActive = activeSim === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleTabChange(tab.id)}
+                className={`xh-btn whitespace-nowrap shrink-0 ${
+                  isActive ? 'primary' : ''
+                }`}
+              >
                 {tab.icon}
-              </span>
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
+                <span className="font-mono text-[11px] opacity-80">{tab.code}</span>
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Render Active Simulation */}
       <div>
