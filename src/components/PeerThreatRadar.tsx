@@ -10,12 +10,17 @@ import {
   Send,
   ChevronDown,
   ChevronUp,
+  Bookmark,
+  BookmarkCheck,
+  ArrowUpRight,
 } from 'lucide-react';
 import { PeerThreat, ThreatComment, MitigationStrategyCategory } from '../types';
 import { loadPeerThreats, savePeerThreats } from '../utils/storage';
 import { playClickSound, playSuccessSound } from '../utils/audio';
 
 interface PeerThreatRadarProps {
+  bookmarkedThreatIds: string[];
+  onToggleBookmark: (threatId: string) => void;
   onVerifyThreat: (threatId: string) => void;
   onAddThreat: (threat: PeerThreat) => void;
   onAddMitigationComment?: (threatId: string, comment: ThreatComment) => void;
@@ -29,6 +34,8 @@ const STRATEGY_CATEGORIES: MitigationStrategyCategory[] = [
 ];
 
 export const PeerThreatRadar: React.FC<PeerThreatRadarProps> = ({
+  bookmarkedThreatIds,
+  onToggleBookmark,
   onVerifyThreat,
   onAddThreat,
   onAddMitigationComment,
@@ -58,11 +65,24 @@ export const PeerThreatRadar: React.FC<PeerThreatRadarProps> = ({
     savePeerThreats(threats);
   }, [threats]);
 
-  const filterOptions = ['All', 'Discord', 'Instagram', 'Campus/Email', 'QR/Quishing', 'Mobile/APK'];
+  const filterOptions = [
+    'All',
+    'My Watchlist',
+    'Discord',
+    'Instagram',
+    'Campus/Email',
+    'QR/Quishing',
+    'Mobile/APK',
+  ];
 
-  const filteredThreats = selectedFilter === 'All'
-    ? threats
-    : threats.filter(t => t.targetPlatform === selectedFilter);
+  const bookmarkedThreats = threats.filter((t) => bookmarkedThreatIds.includes(t.id));
+
+  const filteredThreats =
+    selectedFilter === 'All'
+      ? threats
+      : selectedFilter === 'My Watchlist'
+      ? bookmarkedThreats
+      : threats.filter((t) => t.targetPlatform === selectedFilter);
 
   const toggleCommentsSection = (threatId: string) => {
     playClickSound();
@@ -71,6 +91,20 @@ export const PeerThreatRadar: React.FC<PeerThreatRadarProps> = ({
         ? prev.filter((id) => id !== threatId)
         : [...prev, threatId]
     );
+  };
+
+  const handleReviewWatchlistItem = (threatId: string) => {
+    playClickSound();
+    if (selectedFilter !== 'All' && selectedFilter !== 'My Watchlist') {
+      setSelectedFilter('All');
+    }
+    if (!expandedThreatIds.includes(threatId)) {
+      setExpandedThreatIds((prev) => [...prev, threatId]);
+    }
+    const cardEl = document.getElementById(`threat-card-${threatId}`);
+    if (cardEl) {
+      cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   };
 
   const handleVerify = (id: string) => {
@@ -193,6 +227,7 @@ export const PeerThreatRadar: React.FC<PeerThreatRadarProps> = ({
           <div className="flex flex-wrap items-center gap-2">
             <span className="tag">{threats.length} Verified Advisories</span>
             <span className="tag">{totalStrategiesCount} Peer Mitigation Strategies</span>
+            <span className="tag">{bookmarkedThreats.length} Saved in My Watchlist</span>
           </div>
         </div>
 
@@ -202,7 +237,7 @@ export const PeerThreatRadar: React.FC<PeerThreatRadarProps> = ({
               Community Threat Advisories &amp; Collaborative Mitigation Runbooks
             </h1>
             <p className="text-xs text-[#A9B7BF] mt-0.5">
-              Crowdsourced threat sightings verified by youth defenders. Corroborate indicators, share actionable mitigation strategies, or publish emerging attack patterns.
+              Crowdsourced threat sightings verified by youth defenders. Bookmark priority advisories to your personal watchlist, share mitigation strategies, or publish emerging attack patterns.
             </p>
           </div>
 
@@ -220,145 +255,348 @@ export const PeerThreatRadar: React.FC<PeerThreatRadarProps> = ({
         </div>
       </section>
 
+      {/* Personal My Watchlist Section */}
+      <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-[#D9DDD3]">
+          <div>
+            <span className="rm-kicker">01 / Personal Threat Watchlist &amp; Saved Advisories</span>
+            <h2 className="text-base sm:text-lg font-semibold text-[#0E2238] flex items-center gap-2">
+              <BookmarkCheck className="w-4 h-4 text-[#D79A45]" />
+              <span>My Watchlist ({bookmarkedThreats.length})</span>
+            </h2>
+            <p className="text-xs text-[#4B5A66] mt-0.5">
+              Bookmarked threat advisories and IOCs saved to your local sandbox for ongoing review and reference.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            {bookmarkedThreats.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  playClickSound();
+                  setSelectedFilter(selectedFilter === 'My Watchlist' ? 'All' : 'My Watchlist');
+                }}
+                className="px-3 py-1.5 rounded-lg text-xs font-mono font-medium border border-[#0E2238] bg-[#F3F5F1] hover:bg-[#0E2238] text-[#0E2238] hover:text-[#F3F5F1] transition-colors cursor-pointer"
+              >
+                {selectedFilter === 'My Watchlist' ? 'Show All Advisories' : 'Filter Feed to Watchlist'}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {bookmarkedThreats.length === 0 ? (
+          <div className="p-5 rounded-xl bg-[#F3F5F1] border border-[#D9DDD3] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#4B5A66]">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-white border border-[#C7CDC0] flex items-center justify-center shrink-0 text-[#0E2238]">
+                <Bookmark className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="font-semibold text-[#0E2238]">Your Personal Threat Watchlist is Empty</p>
+                <p className="text-xs text-[#4B5A66] mt-0.5">
+                  Click the <strong>Bookmark</strong> button on any Peer Threat Radar card below to pin critical IOCs and remediation runbooks here for quick review.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {bookmarkedThreats.map((saved) => (
+              <div
+                key={`watchlist-${saved.id}`}
+                className="p-4 rounded-xl bg-[#F3F5F1] border border-[#C7CDC0] hover:border-[#0E2238] transition-all flex flex-col justify-between gap-3"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold border ${
+                          saved.threatLevel === 'Critical'
+                            ? 'bg-red-50 text-red-800 border-red-200'
+                            : saved.threatLevel === 'High'
+                            ? 'bg-amber-50 text-amber-800 border-amber-200'
+                            : 'bg-yellow-50 text-yellow-800 border-yellow-200'
+                        }`}
+                      >
+                        {saved.threatLevel}
+                      </span>
+                      <span className="text-[11px] font-mono text-[#0E2238] bg-white px-2 py-0.5 rounded border border-[#D9DDD3]">
+                        {saved.targetPlatform}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playClickSound();
+                        onToggleBookmark(saved.id);
+                      }}
+                      title="Remove from My Watchlist"
+                      className="text-[11px] font-mono text-[#4B5A66] hover:text-red-700 transition-colors cursor-pointer flex items-center gap-1"
+                    >
+                      <BookmarkCheck className="w-3.5 h-3.5 text-[#D79A45]" />
+                      <span>Remove</span>
+                    </button>
+                  </div>
+
+                  <h3 className="text-xs sm:text-sm font-semibold text-[#0E2238] line-clamp-1">
+                    {saved.title}
+                  </h3>
+
+                  <div className="p-2 rounded bg-[#081420] text-[#5FD3BF] font-mono text-[11px] truncate border border-[#3E6E86]/35">
+                    IOC: {saved.sampleIndicator}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-[#D9DDD3] text-[11px]">
+                  <span className="font-mono text-[#4B5A66]">
+                    {(saved.comments || []).length} Runbook Notes
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleReviewWatchlistItem(saved.id)}
+                    className="font-semibold text-[#0E2238] hover:text-[#2BB5A0] transition-colors cursor-pointer flex items-center gap-1"
+                  >
+                    <span>Review Advisory</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
       {/* Filter Tabs on Paper */}
       <div className="flex items-center gap-1.5 p-2 bg-white border border-[#D9DDD3] rounded-xl overflow-x-auto text-xs shadow-xs">
         <span className="text-[#4B5A66] px-2.5 flex items-center gap-1.5 shrink-0 font-mono">
           <Filter className="w-3.5 h-3.5" />
           <span>Vector:</span>
         </span>
-        {filterOptions.map((opt) => (
-          <button
-            key={opt}
-            type="button"
-            onClick={() => {
-              playClickSound();
-              setSelectedFilter(opt);
-            }}
-            className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer font-medium ${
-              selectedFilter === opt
-                ? 'bg-[#0E2238] text-[#F3F5F1] font-semibold'
-                : 'text-[#4B5A66] hover:text-[#0E2238] hover:bg-[#F3F5F1]'
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
+        {filterOptions.map((opt) => {
+          const label =
+            opt === 'My Watchlist' ? `My Watchlist (${bookmarkedThreats.length})` : opt;
+          return (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => {
+                playClickSound();
+                setSelectedFilter(opt);
+              }}
+              className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer font-medium flex items-center gap-1.5 ${
+                selectedFilter === opt
+                  ? 'bg-[#0E2238] text-[#F3F5F1] font-semibold'
+                  : 'text-[#4B5A66] hover:text-[#0E2238] hover:bg-[#F3F5F1]'
+              }`}
+            >
+              {opt === 'My Watchlist' && (
+                <Bookmark className="w-3 h-3 text-[#D79A45]" />
+              )}
+              <span>{label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Threats Feed */}
       <div className="space-y-5">
-        {filteredThreats.map((threat) => {
-          const comments = threat.comments || [];
-          const isExpanded = expandedThreatIds.includes(threat.id);
-          const draftText = commentDrafts[threat.id] || '';
-          const selectedCategory = commentCategories[threat.id] || 'Technical Control';
-          const customAlias = commentAuthorAlias[threat.id] || '';
+        {filteredThreats.length === 0 ? (
+          <div className="p-8 rounded-xl bg-white border border-[#D9DDD3] text-center space-y-2">
+            <Bookmark className="w-7 h-7 text-[#4B5A66] mx-auto" />
+            <h3 className="text-sm font-semibold text-[#0E2238]">
+              No Threat Advisories Match This Filter
+            </h3>
+            <p className="text-xs text-[#4B5A66] max-w-md mx-auto">
+              {selectedFilter === 'My Watchlist'
+                ? 'You have not bookmarked any advisories yet. Switch to "All" and click the Bookmark button on any threat card to add it to your watchlist.'
+                : 'No threat advisories have been reported for this vector yet.'}
+            </p>
+            {selectedFilter !== 'All' && (
+              <button
+                type="button"
+                onClick={() => {
+                  playClickSound();
+                  setSelectedFilter('All');
+                }}
+                className="mt-2 px-3.5 py-1.5 bg-[#0E2238] text-[#F3F5F1] rounded-lg text-xs font-medium cursor-pointer"
+              >
+                Show All Advisories
+              </button>
+            )}
+          </div>
+        ) : (
+          filteredThreats.map((threat) => {
+            const comments = threat.comments || [];
+            const isExpanded = expandedThreatIds.includes(threat.id);
+            const isBookmarked = bookmarkedThreatIds.includes(threat.id);
+            const draftText = commentDrafts[threat.id] || '';
+            const selectedCategory = commentCategories[threat.id] || 'Technical Control';
+            const customAlias = commentAuthorAlias[threat.id] || '';
 
-          return (
-            <div
-              key={threat.id}
-              className="p-6 rounded-xl bg-white border border-[#D9DDD3] hover:border-[#C7CDC0] transition-all space-y-4 shadow-xs"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#D9DDD3] pb-3.5">
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <span className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-semibold border ${
-                    threat.threatLevel === 'Critical'
-                      ? 'bg-red-50 text-red-800 border-red-200'
-                      : threat.threatLevel === 'High'
-                      ? 'bg-amber-50 text-amber-800 border-amber-200'
-                      : 'bg-yellow-50 text-yellow-800 border-yellow-200'
-                  }`}>
-                    {threat.threatLevel}
-                  </span>
+            return (
+              <div
+                id={`threat-card-${threat.id}`}
+                key={threat.id}
+                className={`p-6 rounded-xl bg-white border transition-all space-y-4 shadow-xs ${
+                  isBookmarked
+                    ? 'border-[#D79A45] ring-1 ring-[#D79A45]/30'
+                    : 'border-[#D9DDD3] hover:border-[#C7CDC0]'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#D9DDD3] pb-3.5">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-semibold border ${
+                      threat.threatLevel === 'Critical'
+                        ? 'bg-red-50 text-red-800 border-red-200'
+                        : threat.threatLevel === 'High'
+                        ? 'bg-amber-50 text-amber-800 border-amber-200'
+                        : 'bg-yellow-50 text-yellow-800 border-yellow-200'
+                    }`}>
+                      {threat.threatLevel}
+                    </span>
 
-                  <span className="text-xs font-mono font-medium text-[#0E2238] bg-[#F3F5F1] px-2.5 py-0.5 rounded border border-[#C7CDC0]">
-                    {threat.targetPlatform}
-                  </span>
+                    <span className="text-xs font-mono font-medium text-[#0E2238] bg-[#F3F5F1] px-2.5 py-0.5 rounded border border-[#C7CDC0]">
+                      {threat.targetPlatform}
+                    </span>
 
-                  <h3 className="text-base font-semibold text-[#0E2238] tracking-tight">
-                    {threat.title}
-                  </h3>
-                </div>
+                    <h3 className="text-base font-semibold text-[#0E2238] tracking-tight">
+                      {threat.title}
+                    </h3>
+                  </div>
 
-                <div className="text-xs text-[#4B5A66] font-mono">
-                  Source: <strong className="text-[#16232F]">{threat.reportedBy}</strong> · {threat.reportedTime}
-                </div>
-              </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="text-xs text-[#4B5A66] font-mono">
+                      Source: <strong className="text-[#16232F]">{threat.reportedBy}</strong> · {threat.reportedTime}
+                    </div>
 
-              <p className="text-[#16232F] text-xs sm:text-sm leading-relaxed">
-                {threat.description}
-              </p>
-
-              {/* Indicator code snippet */}
-              {threat.sampleIndicator && (
-                <div className="p-3 bg-[#081420] rounded-lg border border-[#3E6E86]/40 font-mono text-xs flex items-center justify-between text-[#EEF3F1]">
-                  <div>
-                    <span className="text-[#A9B7BF] mr-2">Observed IOC:</span>
-                    <code className="text-[#5FD3BF]">{threat.sampleIndicator}</code>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playClickSound();
+                        onToggleBookmark(threat.id);
+                      }}
+                      aria-pressed={isBookmarked}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium border transition-colors cursor-pointer flex items-center gap-1.5 ${
+                        isBookmarked
+                          ? 'bg-[#0E2238] text-[#EBC385] border-[#0E2238]'
+                          : 'bg-[#F3F5F1] hover:bg-[#E9ECE6] text-[#0E2238] border-[#C7CDC0]'
+                      }`}
+                    >
+                      {isBookmarked ? (
+                        <>
+                          <BookmarkCheck className="w-3.5 h-3.5 text-[#D79A45]" />
+                          <span>Bookmarked</span>
+                        </>
+                      ) : (
+                        <>
+                          <Bookmark className="w-3.5 h-3.5 text-[#0E2238]" />
+                          <span>Bookmark</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
-              )}
 
-              {/* Red Flags & Actionable Defense */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
-                <div className="p-4 bg-[#F3F5F1] rounded-xl border border-[#D9DDD3] text-xs space-y-1.5">
-                  <span className="font-semibold text-[#0E2238] block">Observed Attack Signatures:</span>
-                  <ul className="space-y-1 text-[#4B5A66] text-xs leading-relaxed">
-                    {threat.redFlags.map((flag, idx) => (
-                      <li key={idx}>• {flag}</li>
-                    ))}
-                  </ul>
+                <p className="text-[#16232F] text-xs sm:text-sm leading-relaxed">
+                  {threat.description}
+                </p>
+
+                {/* Indicator code snippet */}
+                {threat.sampleIndicator && (
+                  <div className="p-3 bg-[#081420] rounded-lg border border-[#3E6E86]/40 font-mono text-xs flex items-center justify-between text-[#EEF3F1]">
+                    <div>
+                      <span className="text-[#A9B7BF] mr-2">Observed IOC:</span>
+                      <code className="text-[#5FD3BF]">{threat.sampleIndicator}</code>
+                    </div>
+                  </div>
+                )}
+
+                {/* Red Flags & Actionable Defense */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+                  <div className="p-4 bg-[#F3F5F1] rounded-xl border border-[#D9DDD3] text-xs space-y-1.5">
+                    <span className="font-semibold text-[#0E2238] block">Observed Attack Signatures:</span>
+                    <ul className="space-y-1 text-[#4B5A66] text-xs leading-relaxed">
+                      {threat.redFlags.map((flag, idx) => (
+                        <li key={idx}>• {flag}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="p-4 bg-emerald-50/70 rounded-xl border border-emerald-200 text-xs space-y-1.5">
+                    <span className="font-semibold text-emerald-900 block">Primary Remediation Blueprint:</span>
+                    <p className="text-emerald-950 text-xs leading-relaxed">
+                      {threat.actionableTip}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="p-4 bg-emerald-50/70 rounded-xl border border-emerald-200 text-xs space-y-1.5">
-                  <span className="font-semibold text-emerald-900 block">Primary Remediation Blueprint:</span>
-                  <p className="text-emerald-950 text-xs leading-relaxed">
-                    {threat.actionableTip}
-                  </p>
-                </div>
-              </div>
+                {/* Verification, Bookmark & Mitigation Discussion Bar */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#D9DDD3] text-xs">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-1.5 text-[#4B5A66]">
+                      <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                      <span>
+                        <strong className="text-[#0E2238] font-mono tabular-nums">{threat.verificationsCount}</strong> Peer Corroborations
+                      </span>
+                    </div>
 
-              {/* Verification & Mitigation Discussion Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#D9DDD3] text-xs">
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-1.5 text-[#4B5A66]">
-                    <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                    <span>
-                      <strong className="text-[#0E2238] font-mono tabular-nums">{threat.verificationsCount}</strong> Peer Corroborations
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleCommentsSection(threat.id)}
+                      className="px-3 py-1.5 rounded-lg bg-[#F3F5F1] hover:bg-[#E9ECE6] border border-[#C7CDC0] text-[#0E2238] font-medium transition-colors cursor-pointer flex items-center gap-1.5"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-[#2BB5A0]" />
+                      <span>
+                        Mitigation Strategies (<strong className="font-mono tabular-nums">{comments.length}</strong>)
+                      </span>
+                      {isExpanded ? (
+                        <ChevronUp className="w-3.5 h-3.5 text-[#4B5A66]" />
+                      ) : (
+                        <ChevronDown className="w-3.5 h-3.5 text-[#4B5A66]" />
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playClickSound();
+                        onToggleBookmark(threat.id);
+                      }}
+                      className={`px-3 py-1.5 rounded-lg border font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
+                        isBookmarked
+                          ? 'bg-[#F3F5F1] border-[#D79A45] text-[#0E2238]'
+                          : 'bg-white hover:bg-[#F3F5F1] border-[#C7CDC0] text-[#4B5A66] hover:text-[#0E2238]'
+                      }`}
+                    >
+                      {isBookmarked ? (
+                        <>
+                          <BookmarkCheck className="w-3.5 h-3.5 text-[#D79A45]" />
+                          <span>Saved in My Watchlist</span>
+                        </>
+                      ) : (
+                        <>
+                          <Bookmark className="w-3.5 h-3.5" />
+                          <span>Save to Watchlist</span>
+                        </>
+                      )}
+                    </button>
                   </div>
 
                   <button
                     type="button"
-                    onClick={() => toggleCommentsSection(threat.id)}
-                    className="px-3 py-1.5 rounded-lg bg-[#F3F5F1] hover:bg-[#E9ECE6] border border-[#C7CDC0] text-[#0E2238] font-medium transition-colors cursor-pointer flex items-center gap-1.5"
+                    onClick={() => handleVerify(threat.id)}
+                    disabled={threat.isUserVerified}
+                    className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
+                      threat.isUserVerified
+                        ? 'bg-[#E9ECE6] text-[#4B5A66] border border-[#C7CDC0] cursor-default'
+                        : 'bg-[#0E2238] hover:bg-[#081420] text-[#F3F5F1]'
+                    }`}
                   >
-                    <MessageSquare className="w-3.5 h-3.5 text-[#2BB5A0]" />
-                    <span>
-                      Mitigation Strategies (<strong className="font-mono tabular-nums">{comments.length}</strong>)
-                    </span>
-                    {isExpanded ? (
-                      <ChevronUp className="w-3.5 h-3.5 text-[#4B5A66]" />
-                    ) : (
-                      <ChevronDown className="w-3.5 h-3.5 text-[#4B5A66]" />
-                    )}
+                    <ThumbsUp className="w-3.5 h-3.5 text-[#5FD3BF]" />
+                    <span>{threat.isUserVerified ? 'Verified by You' : 'Verify Advisory (+20 XP)'}</span>
                   </button>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleVerify(threat.id)}
-                  disabled={threat.isUserVerified}
-                  className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
-                    threat.isUserVerified
-                      ? 'bg-[#E9ECE6] text-[#4B5A66] border border-[#C7CDC0] cursor-default'
-                      : 'bg-[#0E2238] hover:bg-[#081420] text-[#F3F5F1]'
-                  }`}
-                >
-                  <ThumbsUp className="w-3.5 h-3.5 text-[#5FD3BF]" />
-                  <span>{threat.isUserVerified ? 'Verified by You' : 'Verify Advisory (+20 XP)'}</span>
-                </button>
-              </div>
 
               {/* Expandable Peer Mitigation Strategies & Commenting System */}
               {isExpanded && (
@@ -502,7 +740,7 @@ export const PeerThreatRadar: React.FC<PeerThreatRadarProps> = ({
               )}
             </div>
           );
-        })}
+        }))}
       </div>
 
       {/* Submit Report Modal matching Postrix Modal Dialog */}

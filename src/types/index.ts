@@ -26,6 +26,7 @@ export interface UserStats {
   unlockedBadgeIds: string[];
   reportedThreatIds: string[];
   verifiedThreatIds: string[];
+  bookmarkedThreatIds?: string[];
   sessionHistory?: SessionScorePoint[];
 }
 
@@ -83,6 +84,7 @@ export interface PeerThreat {
   actionableTip: string;
   verificationsCount: number;
   isUserVerified?: boolean;
+  isBookmarked?: boolean;
   comments?: ThreatComment[];
 }
 

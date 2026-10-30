@@ -195,6 +195,27 @@ export default function App() {
     });
   };
 
+  // Toggle threat bookmark in personal watchlist
+  const handleToggleBookmark = (threatId: string) => {
+    const currentBookmarks = stats.bookmarkedThreatIds || [];
+    const isCurrentlyBookmarked = currentBookmarks.includes(threatId);
+    const updatedBookmarks = isCurrentlyBookmarked
+      ? currentBookmarks.filter((id) => id !== threatId)
+      : [threatId, ...currentBookmarks];
+
+    setStats((prev) => ({
+      ...prev,
+      bookmarkedThreatIds: updatedBookmarks,
+    }));
+
+    setToastMessage({
+      title: isCurrentlyBookmarked ? 'Removed from My Watchlist' : 'Saved to My Watchlist',
+      subtitle: isCurrentlyBookmarked
+        ? 'The threat advisory was removed from your personal watchlist.'
+        : 'Threat advisory pinned to My Watchlist for future reference and review.',
+    });
+  };
+
   // Data purged from Privacy Shredder
   const handleDataPurged = () => {
     setStats(loadUserStats());
@@ -251,6 +272,8 @@ export default function App() {
 
         {activeTab === 'radar' && (
           <PeerThreatRadar
+            bookmarkedThreatIds={stats.bookmarkedThreatIds || []}
+            onToggleBookmark={handleToggleBookmark}
             onVerifyThreat={handleVerifyThreat}
             onAddThreat={handleAddThreat}
             onAddMitigationComment={handleAddMitigationComment}
@@ -308,52 +331,62 @@ export default function App() {
 
       {/* Postrix Footer matching apps.ravindran.in/postrix/app/ */}
       <footer className="bg-[#081420] text-[#B9C4CC] border-t border-[#3E6E86]/35 px-6 py-6 mt-auto">
-        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2.5">
-            <span className="rm-mono-mark !w-6 !h-6 !text-[11px]" aria-hidden="true">
-              RM
-            </span>
-            <span>
-              <strong className="font-serif text-sm font-semibold text-[#F3F5F1]">
-                Threat <span className="text-[#D79A45]">Guard</span>
-              </strong>{' '}
-              — Interactive Cyber Defense Posture &amp; Threat Simulation Platform
-            </span>
+        <div className="max-w-[1440px] mx-auto space-y-3 text-xs">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="rm-mono-mark !w-6 !h-6 !text-[11px]" aria-hidden="true">
+                RM
+              </span>
+              <span>
+                <strong className="font-serif text-sm font-semibold text-[#F3F5F1]">
+                  Maniq <span className="text-[#D79A45]">Threat Guard</span>
+                </strong>{' '}
+                — Interactive Cyber Defense Posture &amp; Threat Simulation Platform
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <span>
+                Author:{' '}
+                <a
+                  href="https://ravindran.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#5FD3BF] hover:underline font-medium"
+                >
+                  Mani Ravindran
+                </a>{' '}
+                (
+                <a
+                  href="https://ravindran.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-[#EBC385] hover:underline"
+                >
+                  ravindran.in
+                </a>
+                )
+              </span>
+              <span aria-hidden="true">·</span>
+              <button
+                type="button"
+                onClick={() => {
+                  playClickSound();
+                  setIsPrivacyModalOpen(true);
+                }}
+                className="text-[#C9D3D9] hover:text-[#5FD3BF] transition-colors cursor-pointer font-mono"
+              >
+                Zero-Data Governance (GDPR/COPPA)
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          {/* Explicit Privacy & No-Advertisement Disclaimer */}
+          <div className="pt-3 border-t border-[#3E6E86]/25 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-[#A9B7BF]">
             <span>
-              Author:{' '}
-              <a
-                href="https://ravindran.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#5FD3BF] hover:underline font-medium"
-              >
-                Mani Ravindran
-              </a>{' '}
-              (
-              <a
-                href="https://ravindran.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-[#EBC385] hover:underline"
-              >
-                ravindran.in
-              </a>
-              )
+              <strong className="text-[#EBC385]">Disclaimer:</strong> Maniq Threat Guard will not store any personal records on external servers and will never send advertisement or promotional emails.
             </span>
-            <span aria-hidden="true">·</span>
-            <button
-              type="button"
-              onClick={() => {
-                playClickSound();
-                setIsPrivacyModalOpen(true);
-              }}
-              className="text-[#C9D3D9] hover:text-[#5FD3BF] transition-colors cursor-pointer font-mono"
-            >
-              Zero-Data Governance (GDPR/COPPA)
-            </button>
+            <span className="text-[#5FD3BF]">100% Client-Side Sandbox · Zero Sign-In Required</span>
           </div>
         </div>
       </footer>

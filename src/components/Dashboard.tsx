@@ -5,6 +5,8 @@ import { BADGES } from '../data/badges';
 import { calculateRankAndLevel } from '../utils/storage';
 import { playClickSound } from '../utils/audio';
 import { ThreatResilienceChart } from './ThreatResilienceChart';
+import { ThreatOriginHeatMap } from './ThreatOriginHeatMap';
+import { ModuleCompletionRadialChart } from './ModuleCompletionRadialChart';
 
 interface DashboardProps {
   stats: UserStats;
@@ -105,7 +107,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div>
               <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="text-xl sm:text-2xl font-semibold text-[#EEF3F1] tracking-tight font-serif">
-                  {rankInfo.rankTitle} — Personal Security Posture
+                  Maniq Threat Guard — {rankInfo.rankTitle} Posture
                 </h1>
               </div>
               <p className="text-xs sm:text-sm text-[#A9B7BF] mt-1 max-w-2xl leading-relaxed">
@@ -119,6 +121,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   Mani Ravindran (ravindran.in)
                 </a>
                 .
+              </p>
+              <p className="text-[11px] font-mono text-[#EBC385] mt-1.5">
+                Disclaimer: We do not store any user records on servers and will never send advertisement or marketing emails.
               </p>
             </div>
           </div>
@@ -209,16 +214,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </section>
 
-      {/* 01 / Competency Matrix across 5 Security Domains */}
+      {/* 01 / Competency Matrix & Radial Progress Visualization across 5 Security Domains */}
       <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#D9DDD3]">
           <div>
-            <span className="rm-kicker">01 / Multi-Vector Control Coverage</span>
+            <span className="rm-kicker">01 / Multi-Vector Control Coverage &amp; Radial Completion</span>
             <h2 className="text-lg font-semibold text-[#0E2238]">
-              Cybersecurity Domain Competency Matrix
+              Cybersecurity Training Module Completion &amp; Competency Matrix
             </h2>
             <p className="text-xs text-[#4B5A66] mt-0.5">
-              Evaluated defense readiness across phishing, wireless airspace, identity verification, cryptography, and incident response.
+              Radial completion progress and domain mastery across all 5 interactive cybersecurity training modules.
             </p>
           </div>
           <span className="text-xs font-mono text-[#0E2238] bg-[#F3F5F1] border border-[#C7CDC0] px-2.5 py-1 rounded">
@@ -226,7 +231,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* Recharts Radial Progress Visualization */}
+        <ModuleCompletionRadialChart
+          stats={stats}
+          onLaunchSimulation={onLaunchSimulation}
+        />
+
+        {/* 5-Domain Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-3 border-t border-[#D9DDD3]">
           {simulationCards.map((sim) => {
             const mastery = stats.categoryMastery[sim.masteryKey];
             return (
@@ -256,11 +268,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
         currentScore={stats.defenseScore}
       />
 
-      {/* 03 / Interactive Defense Sandboxes */}
+      {/* 03 / Geographical Threat Origin Heat Map Visualization */}
+      <ThreatOriginHeatMap
+        stats={stats}
+        incidents={incidents}
+        onLaunchSimulation={onLaunchSimulation}
+      />
+
+      {/* 04 / Interactive Defense Sandboxes */}
       <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#D9DDD3]">
           <div>
-            <span className="rm-kicker">03 / Interactive Assessment Modules</span>
+            <span className="rm-kicker">04 / Interactive Assessment Modules</span>
             <h2 className="text-lg font-semibold text-[#0E2238]">
               Live Threat Simulation & Defense Sandboxes
             </h2>
@@ -310,11 +329,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </section>
 
-      {/* 04 / Forensic Incident & Breach Post-Mortem Ledger */}
+      {/* 05 / Forensic Incident & Breach Post-Mortem Ledger */}
       <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#D9DDD3]">
           <div>
-            <span className="rm-kicker">04 / Vulnerability Triage & Forensic Ledger</span>
+            <span className="rm-kicker">05 / Vulnerability Triage & Forensic Ledger</span>
             <h2 className="text-lg font-semibold text-[#0E2238]">
               Breach Post-Mortem & Defensive Remediation Runbooks
             </h2>
@@ -385,11 +404,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
         )}
       </section>
 
-      {/* 05 / Unlocked Cyber Badges & Certifications */}
+      {/* 06 / Unlocked Cyber Badges & Certifications */}
       <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#D9DDD3]">
           <div>
-            <span className="rm-kicker">05 / Verified Defender Credentials</span>
+            <span className="rm-kicker">06 / Verified Defender Credentials</span>
             <h2 className="text-lg font-semibold text-[#0E2238]">
               Earned Security Certifications & Badges
             </h2>

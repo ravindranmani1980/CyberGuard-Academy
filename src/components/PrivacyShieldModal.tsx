@@ -110,16 +110,19 @@ export const PrivacyShieldModal: React.FC<PrivacyShieldModalProps> = ({
               <span className="font-mono text-[#5FD3BF] text-[11px]">ZERO REMOTE UPLOADS</span>
             </div>
             <p className="text-[#A9B7BF] text-xs leading-relaxed">
-              ThreatGuard is engineered so that zero personal information, keystrokes, candidate passwords, or device identifiers are ever transmitted to or persisted on remote servers.
+              Maniq Threat Guard is engineered so that zero personal information, keystrokes, candidate passwords, or device identifiers are ever transmitted to or persisted on remote servers.
             </p>
+            <div className="p-2.5 rounded-lg bg-[#0D1C2D] border border-[#5FD3BF]/30 text-[11px] font-mono text-[#EBC385]">
+              Official Disclaimer: We do not store any user records and we will never send advertisement or marketing emails.
+            </div>
             <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-[#C9D3D9]/15 font-mono text-[11px]">
               <div>
                 <span className="text-[#A9B7BF] block">External DB:</span>
                 <span className="text-[#EEF3F1]">None (0 bytes)</span>
               </div>
               <div>
-                <span className="text-[#A9B7BF] block">Tracking Cookies:</span>
-                <span className="text-[#EEF3F1]">Zero (0)</span>
+                <span className="text-[#A9B7BF] block">Ad / Marketing Emails:</span>
+                <span className="text-[#5FD3BF]">Never Sent (0)</span>
               </div>
               <div>
                 <span className="text-[#A9B7BF] block">Session State:</span>

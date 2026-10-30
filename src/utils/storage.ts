@@ -34,6 +34,7 @@ export const INITIAL_USER_STATS: UserStats = {
   unlockedBadgeIds: ['badge_first_defense'],
   reportedThreatIds: [],
   verifiedThreatIds: ['threat_discord_1'],
+  bookmarkedThreatIds: ['threat_discord_1'],
   sessionHistory: DEFAULT_SESSION_HISTORY,
 };
 
@@ -72,6 +73,9 @@ export const loadUserStats = (): UserStats => {
     const parsed = JSON.parse(raw);
     if (!parsed.sessionHistory || parsed.sessionHistory.length === 0) {
       parsed.sessionHistory = DEFAULT_SESSION_HISTORY;
+    }
+    if (!Array.isArray(parsed.bookmarkedThreatIds)) {
+      parsed.bookmarkedThreatIds = ['threat_discord_1'];
     }
     return parsed;
   } catch {
