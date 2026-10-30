@@ -137,14 +137,14 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
         {/* Left Column: Live Attack Monitor & Terminal */}
         <div className="lg:col-span-7 space-y-4">
           <div className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-[#D9DDD3] pb-3.5">
-              <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-[#0E2238]" />
-                <h3 className="text-xs font-bold text-[#0E2238] uppercase tracking-wider font-mono">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D9DDD3] pb-3.5">
+              <div className="flex items-center gap-2 min-w-0">
+                <Terminal className="w-4 h-4 text-[#0E2238] shrink-0" />
+                <h3 className="text-xs font-bold text-[#0E2238] uppercase tracking-wider font-mono break-all">
                   ENDPOINT TELEMETRY: C:\Windows\Temp\host_svc32.exe
                 </h3>
               </div>
-              <div className="flex items-center gap-2 bg-[#081420] px-3 py-1 rounded-md border border-[#3E6E86]/40">
+              <div className="flex items-center gap-2 bg-[#081420] px-3 py-1 rounded-md border border-[#3E6E86]/40 shrink-0">
                 <Clock className="w-3.5 h-3.5 text-[#EBC385]" />
                 <span className={`font-mono text-xs font-semibold tabular-nums ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-[#EBC385]'}`}>
                   00:{timeLeft.toString().padStart(2, '0')}s
@@ -154,7 +154,7 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
 
             {/* Simulated Ransom Note & Encryption Bar (Dark Command Console) */}
             <div className="p-5 bg-[#081420] rounded-xl border border-[#3E6E86]/50 space-y-3.5 font-mono text-xs text-[#EEF3F1]">
-              <div className="text-[#EBC385] font-semibold flex items-center justify-between">
+              <div className="text-[#EBC385] font-semibold flex flex-wrap items-center justify-between gap-2">
                 <span>⚠️ FILE SYSTEM ENCRYPTION STATUS</span>
                 <span className={completedStepIds.includes('step-kill-process') ? 'text-[#5FD3BF]' : 'text-red-400'}>
                   {completedStepIds.includes('step-kill-process') ? 'PROCESS TERMINATED [HALTED]' : 'CPU: 94% · AES-256-CBC'}
@@ -175,9 +175,9 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
                 />
               </div>
 
-              <div className="text-[#A9B7BF] text-[11px] leading-relaxed pt-3 border-t border-[#C9D3D9]/15">
+              <div className="text-[#A9B7BF] text-[11px] leading-relaxed pt-3 border-t border-[#C9D3D9]/15 break-words">
                 <p className="text-[#EEF3F1] font-semibold mb-1">Detected Extortion Artifact (README_DECRYPT.txt):</p>
-                <p className="text-red-300">&quot;Your personal documents, coursework, and tokens are encrypted. Transfer 0.05 BTC to 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa within 48 hours.&quot;</p>
+                <p className="text-red-300 break-all sm:break-words">&quot;Your personal documents, coursework, and tokens are encrypted. Transfer 0.05 BTC to <span className="break-all">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span> within 48 hours.&quot;</p>
               </div>
             </div>
 

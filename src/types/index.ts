@@ -1,4 +1,4 @@
-export type SimulationType = 'phishing' | 'wifi' | 'social_eng' | 'password' | 'ransomware';
+export type SimulationType = 'phishing' | 'wifi' | 'social_eng' | 'smishing' | 'password' | 'ransomware';
 
 export interface SessionScorePoint {
   session: string;

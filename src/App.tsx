@@ -133,7 +133,7 @@ export default function App() {
   // Handle quick drill from header button
   const handleTriggerQuickDrill = () => {
     playClickSound();
-    const simTypes: SimulationType[] = ['phishing', 'wifi', 'social_eng', 'password', 'ransomware'];
+    const simTypes: SimulationType[] = ['phishing', 'wifi', 'social_eng', 'smishing', 'password', 'ransomware'];
     const randomSim = simTypes[Math.floor(Math.random() * simTypes.length)];
     setCurrentSim(randomSim);
     setActiveTab('simulations');

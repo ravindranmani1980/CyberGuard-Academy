@@ -95,7 +95,7 @@ export const PHISHING_EMAILS: PhishingEmail[] = [
       <p class="mb-3 text-[#16232F]">Due to institutional audit deadlines, this refund must be claimed within <strong>48 hours</strong> or the funds will be forfeited back to state auxiliary balances.</p>
       <div class="my-4 p-3.5 bg-[#081420] border border-[#3E6E86]/40 rounded-lg">
         <p class="text-xs text-[#A9B7BF] mb-1">Attached documentation:</p>
-        <div class="flex items-center gap-3 text-sm text-[#5FD3BF] font-mono">
+        <div class="flex items-center gap-3 text-sm text-[#5FD3BF] font-mono break-all">
           <span>📄 Refund_DirectDeposit_Authorization.pdf.exe (842 KB)</span>
         </div>
       </div>
@@ -247,11 +247,12 @@ export interface DialogueOption {
 
 export interface SocialEngScenario {
   id: string;
-  platform: 'Instagram' | 'Discord' | 'Snapchat';
+  platform: 'Instagram' | 'Discord' | 'Snapchat' | 'SMS Text';
   attackerPersona: string;
   attackerAvatarSeed: string;
   situation: string;
   incomingMessages: string[];
+  smsBannerText?: string;
   options: DialogueOption[];
   attackTechnique: string;
   mitreCode: string;
@@ -261,6 +262,272 @@ export interface SocialEngScenario {
     actionableTips: string[];
   };
 }
+
+export interface SmishingClue {
+  id: string;
+  label: string;
+  excerpt: string;
+  explanation: string;
+}
+
+export interface SmishingScenario {
+  id: string;
+  title: string;
+  categoryLabel: string;
+  senderDisplay: string;
+  senderNumber: string;
+  carrierGateway: string;
+  timestamp: string;
+  urgencyLevel: 'Critical' | 'High' | 'Moderate';
+  pretextType: string;
+  mitreCode: string;
+  smsMessages: string[];
+  clues: SmishingClue[];
+  options: DialogueOption[];
+  forensicDebrief: {
+    userMistake: string;
+    redFlagsMissed: string[];
+    actionableTips: string[];
+    recoverySteps: string[];
+  };
+}
+
+export const SMISHING_SCENARIOS: SmishingScenario[] = [
+  {
+    id: 'smish-lost-vault-wallet',
+    title: 'Drill #1: "I Lost My Valut — Send Me Money to Reach Home"',
+    categoryLabel: 'Emergency Financial Smishing & Family/Friend Impersonation',
+    senderDisplay: 'Unknown Number (Claiming to be Cousin / Best Friend)',
+    senderNumber: '+1 (555) 019-7412',
+    carrierGateway: 'Unverified VoIP SMS Gateway · Burner SIM Relay',
+    timestamp: 'Today, 9:42 PM',
+    urgencyLevel: 'Critical',
+    pretextType: 'Distress & Financial Coercion ("Lost Valut / Stranded")',
+    mitreCode: 'MITRE T1656 / T1660',
+    smsMessages: [
+      'Hey!! It is me, my phone screen broke and battery died so I am texting you from a stranger phone at the transit terminal.',
+      'I lost my valut and send me money to reach home please!! All my cash and cards were inside.',
+      'I need $185 sent right now via instant transfer to +1-555-019-7412 (Name: K. Vane) so I can buy the last ticket home tonight. Please hurry, this stranger is leaving in 3 minutes!!',
+    ],
+    clues: [
+      {
+        id: 'clue-valut-1',
+        label: 'Unverified Burner Number',
+        excerpt: 'Texting from +1 (555) 019-7412 ("stranger phone")',
+        explanation: 'Scammers claim their phone broke or died to explain why the SMS comes from an unfamiliar VoIP number.',
+      },
+      {
+        id: 'clue-valut-2',
+        label: 'Distress & Spelling Bait',
+        excerpt: '"I lost my valut and send me money to reach home"',
+        explanation: 'High-emotion panic pretexts ("lost my valut/wallet", stranded at night) are engineered to bypass logical verification.',
+      },
+      {
+        id: 'clue-valut-3',
+        label: 'Mismatched Payment Recipient',
+        excerpt: 'Instant transfer to third-party mule account (K. Vane)',
+        explanation: 'Directing irreversible P2P payments to an unknown third-party name is a hallmark of money-mule smishing.',
+      },
+    ],
+    options: [
+      {
+        id: 'valut-opt-send',
+        text: 'Send the $185 immediately via instant transfer so they are not stranded overnight.',
+        isVulnerable: true,
+        responseMessage: 'BREACH: Funds were wired to a criminal money-mule account! The scammer immediately demands another $250 for "luggage fees".',
+        xpDelta: -30,
+      },
+      {
+        id: 'valut-opt-call',
+        text: 'Refuse the transfer and call your friend/family member\'s real saved phone number directly to verify their location.',
+        isVulnerable: false,
+        responseMessage: 'DEFENSE VERIFIED: You called their real number—they answered from home safe and sound, confirming the SMS was a stranded-traveler smishing scam!',
+        xpDelta: 80,
+      },
+      {
+        id: 'valut-opt-challenge',
+        text: 'Ask a secret personal verification question only your real friend would know (e.g., "What street did we grow up on?") and block if they dodge.',
+        isVulnerable: false,
+        responseMessage: 'DEFENSE VERIFIED: The scammer could not answer the personal challenge question and disconnected immediately.',
+        xpDelta: 75,
+      },
+    ],
+    forensicDebrief: {
+      userMistake: 'Transferred money to an unverified phone number based on an emotional "I lost my valut / stranded" SMS pretext.',
+      redFlagsMissed: [
+        'Message originated from an unknown VoIP number with the excuse of borrowing a stranger\'s phone.',
+        'Classic distress phrasing: "I lost my valut and send me money to reach home" paired with a 3-minute countdown.',
+        'Payment recipient name ("K. Vane") did not match the person claiming to be in trouble.',
+      ],
+      actionableTips: [
+        'Always call the person\'s original, saved phone number before ever sending money—even if the text claims their phone is dead.',
+        'Establish a family/friend "safe word" or ask a specific personal question that an impersonator could never guess.',
+        'Never send irreversible instant transfers (UPI, Zelle, Venmo, Crypto, or Wire) to an unknown recipient handle.',
+      ],
+      recoverySteps: [
+        'Contact your bank or payment app fraud department immediately to report an unauthorized social-engineering scam transfer.',
+        'Alert family members and contacts that a scammer is impersonating relatives via SMS.',
+        'Forward the spam text message to 7726 (SPAM) so carrier filters block the burner number.',
+      ],
+    },
+  },
+  {
+    id: 'smish-boss-financial-report',
+    title: 'Drill #2: "Boss Ordering: Send Me the Financial Report"',
+    categoryLabel: 'Executive Whaling & Authority Smishing (BEC)',
+    senderDisplay: 'CEO / Managing Director (Unsaved Mobile)',
+    senderNumber: '+1 (555) 014-8829',
+    carrierGateway: 'External SMS Relay · Not in Corporate MDM Directory',
+    timestamp: 'Today, 2:15 PM',
+    urgencyLevel: 'Critical',
+    pretextType: 'Executive Authority & Isolation ("Boss Ordering")',
+    mitreCode: 'MITRE T1566.004 / T1656',
+    smsMessages: [
+      'Hi, this is your Boss. I am currently locked in an urgent off-site investor board session and cannot answer voice calls.',
+      'I am ordering you right now: send me the financial report (Q4 balance sheet & payroll ledger) to exec-review-private@protonmail.com immediately.',
+      'Do not loop in Finance or reply on Slack—this is strictly confidential until the board vote finishes in 15 minutes.',
+    ],
+    clues: [
+      {
+        id: 'clue-boss-1',
+        label: 'Unlisted External Phone Number',
+        excerpt: '+1 (555) 014-8829 (Not in Corporate Directory)',
+        explanation: 'Attackers spoof display names or claim to have a "new private mobile number" to impersonate executives.',
+      },
+      {
+        id: 'clue-boss-2',
+        label: 'Coercive Authority Command',
+        excerpt: '"Boss ordering: send me the financial report immediately"',
+        explanation: 'Uses intimidating executive authority to pressure employees into bypassing data governance protocols.',
+      },
+      {
+        id: 'clue-boss-3',
+        label: 'Secrecy & Channel Isolation',
+        excerpt: '"Cannot answer voice calls... Do not loop in Finance or reply on Slack"',
+        explanation: 'Explicitly forbids out-of-band verification on official company channels (Slack/Teams/Voice) so the ruse isn\'t exposed.',
+      },
+    ],
+    options: [
+      {
+        id: 'boss-opt-comply',
+        text: 'Obey the Boss\'s order immediately and email the Q4 financial report to the external address before the 15-minute deadline.',
+        isVulnerable: true,
+        responseMessage: 'BREACH: Confidential company financial reports and employee payroll records were exfiltrated to an external threat actor!',
+        xpDelta: -35,
+      },
+      {
+        id: 'boss-opt-verify-slack',
+        text: 'Refuse to send files via SMS/external email and verify the request with your Boss on your organization\'s authenticated Slack/Teams channel.',
+        isVulnerable: false,
+        responseMessage: 'DEFENSE VERIFIED: Your Boss confirmed on official Slack that they are at their desk and never sent that text. You stopped a Business Email/SMS Compromise!',
+        xpDelta: 85,
+      },
+      {
+        id: 'boss-opt-soc',
+        text: 'Flag the SMS as an Executive Impersonation (BEC) attempt and forward the header to Security Operations.',
+        isVulnerable: false,
+        responseMessage: 'DEFENSE VERIFIED: Security Operations blocked the external protonmail drop-box and alerted all finance staff.',
+        xpDelta: 80,
+      },
+    ],
+    forensicDebrief: {
+      userMistake: 'Exfiltrated internal financial reports in response to an unverified SMS claiming to be the Boss.',
+      redFlagsMissed: [
+        'Command arrived via personal SMS from an unrecognized phone number rather than authenticated corporate channels.',
+        'Demanded delivery of sensitive financial reports to an external, non-corporate email address.',
+        'Classic isolation tactic: "I am in a board session, cannot take calls, do not message on Slack."',
+      ],
+      actionableTips: [
+        'Executives will never order confidential financial reports to be sent to external personal emails via text message.',
+        'Always verify executive requests using an independent, authenticated internal directory channel (corporate Slack, Teams, or internal phone extension).',
+        'Treat any instruction saying "do not verify with anyone else" as a high-severity social engineering red flag.',
+      ],
+      recoverySteps: [
+        'Immediately notify the Data Protection Officer (DPO) and Security Operations of the disclosed financial document.',
+        'Revoke any shared document links or cloud permissions if a link was transmitted.',
+        'Issue a company-wide alert warning staff of active CEO/Boss SMS impersonation.',
+      ],
+    },
+  },
+  {
+    id: 'smish-manager-launch-tomorrow',
+    title: 'Drill #3: "Manager Requesting Company Financial Details Before Going Live Tomorrow"',
+    categoryLabel: 'Pre-Launch Deadline Pretexting & Financial Credential Harvesting',
+    senderDisplay: 'Project Manager (Launch Ops)',
+    senderNumber: '+1 (555) 017-3309',
+    carrierGateway: 'Spoofed Alphanumeric / Unverified SMS Gateway',
+    timestamp: 'Today, 6:48 PM',
+    urgencyLevel: 'Critical',
+    pretextType: 'Pre-Launch Crisis ("Before Going Live Tomorrow")',
+    mitreCode: 'MITRE T1598 / T1660',
+    smsMessages: [
+      'Urgent update from your Manager: Our payment gateway vendor flagged a blocker right before going live tomorrow morning at 8:00 AM!',
+      'I am requesting company financial details—specifically our corporate bank routing/IBAN, tax ID, and Stripe live secret key—right now over SMS so I can paste them into the vendor portal.',
+      'If you don\'t text me the company financial details in the next 10 minutes, tomorrow\'s go-live launch will be scrubbed and management will hold our team responsible!',
+    ],
+    clues: [
+      {
+        id: 'clue-mgr-1',
+        label: 'Go-Live Tomorrow Crisis Pressure',
+        excerpt: '"Before going live tomorrow... next 10 minutes or launch will be scrubbed"',
+        explanation: 'Attackers research public product launch dates and strike the evening before go-live when teams are exhausted and stressed.',
+      },
+      {
+        id: 'clue-mgr-2',
+        label: 'Plaintext Financial & API Key Demand',
+        excerpt: '"Requesting company financial details, bank routing, and Stripe live secret key over SMS"',
+        explanation: 'Corporate banking details and live payment API keys are never transmitted in plaintext over SMS.',
+      },
+      {
+        id: 'clue-mgr-3',
+        label: 'Blame & Fear Intimidation',
+        excerpt: '"Management will hold our team responsible"',
+        explanation: 'Uses fear of professional blame for delaying a launch to force compliance without change-control approval.',
+      },
+    ],
+    options: [
+      {
+        id: 'mgr-opt-send-details',
+        text: 'Text the company financial details and Stripe live key right away so tomorrow\'s go-live is not delayed.',
+        isVulnerable: true,
+        responseMessage: 'BREACH: Attackers used the company financial details and live payment keys to divert settlement payouts and drain corporate funds before launch!',
+        xpDelta: -40,
+      },
+      {
+        id: 'mgr-opt-out-of-band',
+        text: 'Halt! Never send company financial details or API keys over SMS. Call the Manager on the verified launch bridge / PagerDuty channel.',
+        isVulnerable: false,
+        responseMessage: 'DEFENSE VERIFIED: On the live launch bridge, your Manager confirmed the payment gateway was already configured weeks ago—the SMS was a targeted pre-launch spear-smishing attack!',
+        xpDelta: 90,
+      },
+      {
+        id: 'mgr-opt-policy',
+        text: 'Reject the SMS request and require a dual-authorized Finance & DevSecOps change ticket inside the corporate vault.',
+        isVulnerable: false,
+        responseMessage: 'DEFENSE VERIFIED: Enforcing zero-trust secret management prevented unauthorized financial disclosure prior to go-live.',
+        xpDelta: 85,
+      },
+    ],
+    forensicDebrief: {
+      userMistake: 'Transmitted company financial details and live payment credentials over SMS under pre-launch time pressure.',
+      redFlagsMissed: [
+        'Exploited the high-stress window "before going live tomorrow" to manufacture a fake 10-minute emergency.',
+        'Requested raw company financial details and live production secret keys over unencrypted SMS.',
+        'Bypassed standard change-management and finance vault workflows.',
+      ],
+      actionableTips: [
+        'Never share company financial details, bank routing numbers, or production API keys via SMS, email, or chat.',
+        'Pre-launch and Friday-evening deadlines are prime windows for targeted social engineering—always verify via your live incident/launch voice bridge.',
+        'Store and share financial or payment credentials exclusively through hardware-authenticated enterprise vaults.',
+      ],
+      recoverySteps: [
+        'Immediately rotate all live payment gateway API keys (e.g., Stripe/PayPal secret keys) and lock corporate payout routing changes.',
+        'Place a fraud freeze on corporate bank accounts and notify treasury operations.',
+        'Audit recent settlement webhook endpoints for unauthorized modifications.',
+      ],
+    },
+  },
+];
 
 export const SOCIAL_ENG_SCENARIOS: SocialEngScenario[] = [
   {
@@ -274,6 +541,7 @@ export const SOCIAL_ENG_SCENARIOS: SocialEngScenario[] = [
       "I need a huge favor, I'm competing in this Red Bull creator contest and I'm 2 votes away from qualifying for the finals!! 🏆",
       "I entered your number so you can vote for me. Insta is gonna text you a 6-digit link/code right now, can you screenshot it and send it to me real quick?? Please don't let me down!!",
     ],
+    smsBannerText: 'Instagram code: 829-410. DO NOT share this. It can be used to reset your Instagram password.',
     options: [
       {
         id: 'opt-send-code',
@@ -310,6 +578,132 @@ export const SOCIAL_ENG_SCENARIOS: SocialEngScenario[] = [
         'Never forward any verification code sent to your phone, even if the person messaging you is your best friend or sibling.',
         'When a friend makes unusual requests involving codes, money, or gift cards, contact them through a different channel (phone call or in person).',
         'Switch your account 2FA from SMS to an Authenticator App (e.g. Google Authenticator) which cannot be forwarded like this.',
+      ],
+    },
+  },
+  {
+    id: 'social-sms-lost-vault',
+    platform: 'SMS Text',
+    attackerPersona: 'Unknown Number (+1 555-019-7412)',
+    attackerAvatarSeed: 'vault',
+    situation: 'Spam text message claiming to be a close friend/relative who lost their wallet/valut and needs emergency travel money.',
+    incomingMessages: [
+      'Hey it is me! My phone died and I am texting from a stranger phone at the station.',
+      'I lost my valut and send me money to reach home please!!',
+      'Send $185 right now to this instant transfer number (+1-555-019-7412) so I can buy the last ticket home tonight!',
+    ],
+    smsBannerText: 'CARRIER ALERT: Sender +1 (555) 019-7412 is not in your contacts and originates from an external VoIP gateway.',
+    options: [
+      {
+        id: 'opt-vault-pay',
+        text: 'Wire the $185 immediately so they can get home safely tonight.',
+        isVulnerable: true,
+        responseMessage: 'Scam successful! You wired money to an impersonator using a classic "stranded traveler / lost valut" spam text.',
+        xpDelta: -30,
+      },
+      {
+        id: 'opt-vault-call',
+        text: 'Do not send money. Call your friend/relative on their real saved phone number first to verify.',
+        isVulnerable: false,
+        responseMessage: 'Verified! Your friend answered their real phone at home and confirmed they never lost their wallet.',
+        xpDelta: 80,
+      },
+    ],
+    attackTechnique: 'Stranded Relative / "Lost Valut" Emergency Smishing Scam',
+    mitreCode: 'MITRE T1656 / T1660',
+    forensicDebrief: {
+      userMistake: 'Sent money to an unverified number after receiving an emotional "I lost my valut and send me money to reach home" text.',
+      redFlagsMissed: [
+        'Message came from an unknown number claiming to borrow a stranger\'s phone.',
+        'Urgent demand for instant money transfer without verifying identity via voice call.',
+      ],
+      actionableTips: [
+        'Always call your friend or family member\'s known number directly before sending emergency funds.',
+        'Ask a personal verification question that only the real person could answer.',
+      ],
+    },
+  },
+  {
+    id: 'social-sms-boss-report',
+    platform: 'SMS Text',
+    attackerPersona: 'Boss / Managing Director (+1 555-014-8829)',
+    attackerAvatarSeed: 'boss',
+    situation: 'Boss sending a text message ordering you to immediately send the confidential financial report while claiming to be in a meeting.',
+    incomingMessages: [
+      'This is your Boss. I am in a closed-door board meeting and cannot take calls.',
+      'I am ordering you: send me the financial report right now to exec-board-files@protonmail.com.',
+      'Do not message me on Slack or delay—the board needs the numbers in 10 minutes.',
+    ],
+    smsBannerText: 'SECURITY NOTICE: External phone number not registered in Corporate MDM Directory.',
+    options: [
+      {
+        id: 'opt-boss-send',
+        text: 'Follow the Boss\'s text order and send the financial report right away.',
+        isVulnerable: true,
+        responseMessage: 'Data Breach! You exfiltrated confidential financial reports to an external BEC attacker.',
+        xpDelta: -35,
+      },
+      {
+        id: 'opt-boss-verify',
+        text: 'Refuse external SMS delivery and verify with your Boss via authenticated company Slack/Teams.',
+        isVulnerable: false,
+        responseMessage: 'Blocked! Your Boss confirmed on Slack that the SMS was a spoofed executive whaling attack.',
+        xpDelta: 85,
+      },
+    ],
+    attackTechnique: 'Executive Authority Pretexting (CEO / Boss Smishing)',
+    mitreCode: 'MITRE T1566.004 / T1656',
+    forensicDebrief: {
+      userMistake: 'Complied with an unverified SMS from "Boss" ordering delivery of the financial report.',
+      redFlagsMissed: [
+        'Unlisted mobile number combined with "in a meeting, cannot take calls" isolation.',
+        'Request to send internal financial reports to an external email address.',
+      ],
+      actionableTips: [
+        'Never send internal financial reports in response to an SMS text message.',
+        'Verify all executive requests through authenticated internal corporate channels.',
+      ],
+    },
+  },
+  {
+    id: 'social-sms-manager-golive',
+    platform: 'SMS Text',
+    attackerPersona: 'Project Manager (+1 555-017-3309)',
+    attackerAvatarSeed: 'manager',
+    situation: 'Manager is requesting company financial details via text message right before going live tomorrow.',
+    incomingMessages: [
+      'Urgent from Manager: We have a payment settlement blocker right before going live tomorrow!',
+      'I am requesting company financial details, corporate routing numbers, and live payment keys over SMS right now to clear the launch check.',
+      'Send them in the next 10 minutes or tomorrow\'s go-live is cancelled!',
+    ],
+    smsBannerText: 'DLP WARNING: Never transmit banking routing details or live API keys over unencrypted SMS.',
+    options: [
+      {
+        id: 'opt-mgr-comply',
+        text: 'Reply with the company financial details so tomorrow\'s go-live launch stays on schedule.',
+        isVulnerable: true,
+        responseMessage: 'Critical Compromise! Attackers hijacked corporate payout routing prior to launch.',
+        xpDelta: -40,
+      },
+      {
+        id: 'opt-mgr-bridge',
+        text: 'Refuse SMS disclosure and verify directly on the authenticated go-live launch bridge.',
+        isVulnerable: false,
+        responseMessage: 'Excellent defense! You protected company financial details from a pre-launch spear-smishing attack.',
+        xpDelta: 90,
+      },
+    ],
+    attackTechnique: 'Pre-Launch Urgency Pretexting ("Before Going Live Tomorrow")',
+    mitreCode: 'MITRE T1598 / T1660',
+    forensicDebrief: {
+      userMistake: 'Shared company financial details via SMS under pre-launch deadline pressure.',
+      redFlagsMissed: [
+        'Artificial crisis manufactured "before going live tomorrow" to bypass normal financial controls.',
+        'Plaintext SMS request for corporate banking and financial details.',
+      ],
+      actionableTips: [
+        'Company financial details and production credentials must never be shared over SMS.',
+        'Always confirm urgent pre-launch requests via your verified incident/launch voice bridge.',
       ],
     },
   },

@@ -56,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
         </a>
 
         {/* Zone 2: Navigation links matching Postrix (.rm-navlink / .rm-navlink-active) */}
-        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-7 overflow-x-auto">
+        <nav aria-label="Main navigation" className="hidden md:flex flex-wrap items-center gap-x-6 gap-y-1">
           <button
             type="button"
             onClick={() => handleNavClick('dashboard')}
@@ -137,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Mobile Subnavigation Bar */}
-      <div className="md:hidden flex items-center justify-around px-1 py-2 border-t border-[#3E6E86]/35 overflow-x-auto text-xs">
+      <div className="md:hidden flex flex-wrap items-center justify-around gap-2 px-1 py-2 border-t border-[#3E6E86]/35 text-xs">
         <button
           type="button"
           onClick={() => handleNavClick('dashboard')}

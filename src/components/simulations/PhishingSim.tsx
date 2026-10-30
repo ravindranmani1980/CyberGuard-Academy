@@ -191,13 +191,13 @@ export const PhishingSim: React.FC<PhishingSimProps> = ({ onBreach, onSuccess })
               </button>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-[#4B5A66] gap-1">
-              <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-[#4B5A66] gap-1 min-w-0">
+              <div className="min-w-0 break-words">
                 <span className="text-[#4B5A66]">From: </span>
                 <span className="font-semibold text-[#16232F]">{currentEmail.senderName} </span>
-                <span className="font-mono text-[#0E2238] text-[11px]">&lt;{currentEmail.senderAddress}&gt;</span>
+                <span className="font-mono text-[#0E2238] text-[11px] break-all">&lt;{currentEmail.senderAddress}&gt;</span>
               </div>
-              <span className="font-mono text-[#4B5A66]">{currentEmail.timestamp}</span>
+              <span className="font-mono text-[#4B5A66] shrink-0">{currentEmail.timestamp}</span>
             </div>
 
             {/* Expandable Technical Headers Inspector (Postrix Dark Command Card) */}
@@ -206,19 +206,19 @@ export const PhishingSim: React.FC<PhishingSimProps> = ({ onBreach, onSuccess })
                 <div className="text-[#5FD3BF] font-semibold mb-1 uppercase tracking-wider text-[11px]">
                   SMTP Envelope &amp; Authentication Telemetry
                 </div>
-                <div className="flex justify-between">
+                <div className="flex flex-wrap justify-between gap-2">
                   <span className="text-[#A9B7BF]">Return-Path:</span>
-                  <span className={currentEmail.actualReturnPath.includes('malicious') || currentEmail.actualReturnPath.includes('aid-portal') ? 'text-[#EBC385] font-semibold' : 'text-[#5FD3BF]'}>
+                  <span className={`break-all ${currentEmail.actualReturnPath.includes('malicious') || currentEmail.actualReturnPath.includes('aid-portal') ? 'text-[#EBC385] font-semibold' : 'text-[#5FD3BF]'}`}>
                     {currentEmail.actualReturnPath}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex flex-wrap justify-between gap-2">
                   <span className="text-[#A9B7BF]">SPF Verification:</span>
                   <span className={currentEmail.isPhishing ? 'text-[#EBC385]' : 'text-[#5FD3BF]'}>
                     {currentEmail.isPhishing ? 'SOFTFAIL (~all ip unmatched)' : 'PASS (spf.university.edu)'}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex flex-wrap justify-between gap-2">
                   <span className="text-[#A9B7BF]">DKIM Signature:</span>
                   <span className={currentEmail.isPhishing ? 'text-red-400 font-semibold' : 'text-[#5FD3BF]'}>
                     {currentEmail.isPhishing ? 'FAIL / UNSIGNED' : 'PASS (domain verified)'}
@@ -229,7 +229,7 @@ export const PhishingSim: React.FC<PhishingSimProps> = ({ onBreach, onSuccess })
           </div>
 
           {/* Email Body Viewing Canvas */}
-          <div className="p-5 sm:p-6 flex-1 overflow-y-auto text-[#16232F] text-sm leading-relaxed border-b border-[#D9DDD3]">
+          <div className="p-5 sm:p-6 flex-1 overflow-y-auto overflow-x-hidden break-words text-[#16232F] text-sm leading-relaxed border-b border-[#D9DDD3]">
             <div dangerouslySetInnerHTML={{ __html: currentEmail.bodyHtml }} />
 
             {/* Clickable trap links inside email to test student vulnerability */}

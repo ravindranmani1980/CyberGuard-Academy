@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Award, Flame, AlertOctagon, CheckCircle2, ChevronRight, ArrowUpRight, Lock, Terminal, Wifi, Mail, MessageSquare, KeyRound } from 'lucide-react';
+import { Shield, Award, Flame, AlertOctagon, CheckCircle2, ChevronRight, ArrowUpRight, Lock, Terminal, Wifi, Mail, MessageSquare, Smartphone, KeyRound } from 'lucide-react';
 import { UserStats, BreachIncident, SimulationType } from '../types';
 import { BADGES } from '../data/badges';
 import { calculateRankAndLevel } from '../utils/storage';
@@ -82,6 +82,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
       icon: <Terminal className="w-4 h-4 text-[#0E2238]" />,
       codeRef: 'MOD-05',
       description: '45-second containment drill: Isolate network interfaces and terminate rogue encryptor binaries.',
+    },
+    {
+      type: 'smishing',
+      title: 'Spam SMS & BEC Pretexting',
+      category: 'Smishing & BEC',
+      masteryKey: 'socialEng',
+      icon: <Smartphone className="w-4 h-4 text-[#0E2238]" />,
+      codeRef: 'MOD-06',
+      description: 'Triage urgent spam texts: "lost my valut" money scams, Boss ordering financial reports, and pre-launch Manager traps.',
     },
   ];
 
@@ -237,8 +246,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
           onLaunchSimulation={onLaunchSimulation}
         />
 
-        {/* 5-Domain Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-3 border-t border-[#D9DDD3]">
+        {/* 6-Module Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 pt-3 border-t border-[#D9DDD3]">
           {simulationCards.map((sim) => {
             const mastery = stats.categoryMastery[sim.masteryKey];
             return (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertTriangle, CheckCircle, Smartphone } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Smartphone, ChevronRight } from 'lucide-react';
 import { SOCIAL_ENG_SCENARIOS, SocialEngScenario, DialogueOption } from '../../data/scenarios';
 import { BreachIncident } from '../../types';
 import { playClickSound, playSuccessSound, playBreachAlertSound } from '../../utils/audio';
@@ -10,9 +10,18 @@ interface SocialEngSimProps {
 }
 
 export const SocialEngSim: React.FC<SocialEngSimProps> = ({ onBreach, onSuccess }) => {
-  const [scenario] = useState<SocialEngScenario>(SOCIAL_ENG_SCENARIOS[0]);
+  const [scenarioIdx, setScenarioIdx] = useState<number>(0);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<{ isVulnerable: boolean; text: string } | null>(null);
+
+  const scenario: SocialEngScenario = SOCIAL_ENG_SCENARIOS[scenarioIdx];
+
+  const handleSelectScenario = (index: number) => {
+    playClickSound();
+    setScenarioIdx(index);
+    setSelectedOptionId(null);
+    setOutcome(null);
+  };
 
   const handleSelectOption = (option: DialogueOption) => {
     playClickSound();
@@ -24,17 +33,17 @@ export const SocialEngSim: React.FC<SocialEngSimProps> = ({ onBreach, onSuccess 
       const incident: BreachIncident = {
         id: `inc-social-${Date.now()}`,
         timestamp: 'Just now',
-        scenarioTitle: `Compromised Friend Account Takeover (${scenario.platform} DM)`,
-        category: 'Social Engineering & Credential Harvesting',
+        scenarioTitle: `${scenario.attackTechnique} (${scenario.platform})`,
+        category: 'Social Engineering & Smishing Pretexting',
         attackerTechnique: scenario.attackTechnique,
         mitreRef: scenario.mitreCode,
         userMistake: scenario.forensicDebrief.userMistake,
         redFlagsMissed: scenario.forensicDebrief.redFlagsMissed,
         actionableTips: scenario.forensicDebrief.actionableTips,
         recoverySteps: [
-          'Log into your account via the official app and select "Forget Password" -> "Need More Help".',
-          'Notify close friends on alternative apps (SMS/Discord) that your handle is currently hijacked.',
-          'Request Instagram/Platform identity selfie verification to re-bind your mobile number.',
+          'Contact the impersonated person or manager directly via a verified voice call or corporate directory channel.',
+          'Never wire emergency funds, forward OTP codes, or transmit company financial details over SMS or DM.',
+          'Report the phone number or hijacked handle to carrier spam (7726) or internal Security Operations.',
         ],
         retested: false,
       };
@@ -52,23 +61,62 @@ export const SocialEngSim: React.FC<SocialEngSimProps> = ({ onBreach, onSuccess 
     setOutcome(null);
   };
 
+  const handleNextScenario = () => {
+    handleSelectScenario((scenarioIdx + 1) % SOCIAL_ENG_SCENARIOS.length);
+  };
+
   return (
     <div className="space-y-6">
-      {/* Simulation Concept Header */}
-      <div className="p-5 rounded-xl bg-white border border-[#D9DDD3] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <span className="rm-kicker">MOD-03 / Social Engineering &amp; OTP Relay Defense</span>
-          <h2 className="text-lg font-semibold text-[#0E2238]">
-            Compromised Peer Impersonation: 2FA Verification Forwarding Trap
-          </h2>
+      {/* Simulation Concept Header & Scenario Switcher */}
+      <div className="p-5 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span className="rm-kicker">
+              MOD-03 / Social Engineering, DM &amp; Spam Text Pretexting Defense
+            </span>
+            <h2 className="text-lg font-semibold text-[#0E2238]">
+              {scenario.attackTechnique}
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="px-3.5 py-2 bg-[#F3F5F1] hover:bg-[#E9ECE6] text-[#0E2238] border border-[#C7CDC0] rounded-lg text-xs font-mono font-medium cursor-pointer"
+            >
+              Reset Scenario
+            </button>
+            <button
+              type="button"
+              onClick={handleNextScenario}
+              className="px-3.5 py-2 bg-[#0E2238] hover:bg-[#081420] text-[#F3F5F1] rounded-lg text-xs font-mono font-medium cursor-pointer flex items-center gap-1"
+            >
+              <span>Next Scenario</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#5FD3BF]" />
+            </button>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={handleReset}
-          className="px-3.5 py-2 bg-[#F3F5F1] hover:bg-[#E9ECE6] text-[#0E2238] border border-[#C7CDC0] rounded-lg text-xs font-mono font-medium cursor-pointer self-start sm:self-auto"
-        >
-          Reset Scenario
-        </button>
+
+        {/* Scenario Selector Bar */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-3 border-t border-[#D9DDD3]">
+          {SOCIAL_ENG_SCENARIOS.map((item, idx) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => handleSelectScenario(idx)}
+              className={`p-3 rounded-lg border text-left text-xs transition-all cursor-pointer ${
+                idx === scenarioIdx
+                  ? 'bg-[#0E2238] text-[#EEF3F1] border-[#0E2238]'
+                  : 'bg-[#F3F5F1] hover:bg-white text-[#16232F] border-[#C7CDC0]'
+              }`}
+            >
+              <div className="text-[10px] font-mono opacity-80 mb-0.5">
+                SCENARIO 0{idx + 1} · {item.platform}
+              </div>
+              <div className="font-semibold line-clamp-1">{item.attackerPersona}</div>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Main Two-Zone Interface */}
@@ -80,14 +128,14 @@ export const SocialEngSim: React.FC<SocialEngSimProps> = ({ onBreach, onSuccess 
             <div className="flex items-center justify-between px-3.5 py-2.5 bg-[#0D1C2D] rounded-xl mb-3 border border-[#C9D3D9]/15">
               <div className="flex items-center gap-2.5">
                 <div className="rm-mono-mark !w-8 !h-8 !text-xs">
-                  JD
+                  {scenario.platform === 'SMS Text' ? 'SMS' : 'DM'}
                 </div>
                 <div>
                   <h4 className="text-xs font-semibold text-[#EEF3F1] flex items-center gap-1.5">
                     <span>{scenario.attackerPersona}</span>
                     <span className="text-[10px] text-[#5FD3BF] font-mono">({scenario.platform})</span>
                   </h4>
-                  <span className="text-[10px] text-[#A9B7BF] font-mono">Active 2m ago</span>
+                  <span className="text-[10px] text-[#A9B7BF] font-mono">Active Now</span>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-[#A9B7BF]">
@@ -106,7 +154,7 @@ export const SocialEngSim: React.FC<SocialEngSimProps> = ({ onBreach, onSuccess 
               {scenario.incomingMessages.map((msg, i) => (
                 <div key={i} className="flex items-start gap-2.5">
                   <div className="w-6 h-6 rounded bg-[#102236] border border-[#C9D3D9]/20 flex items-center justify-center text-[10px] font-mono font-semibold text-[#5FD3BF] shrink-0">
-                    J
+                    !
                   </div>
                   <div className="max-w-[85%] bg-[#102236] text-[#EEF3F1] p-3 rounded-xl rounded-tl-xs text-xs leading-relaxed border border-[#C9D3D9]/15">
                     {msg}
@@ -114,16 +162,18 @@ export const SocialEngSim: React.FC<SocialEngSimProps> = ({ onBreach, onSuccess 
                 </div>
               ))}
 
-              {/* Simulated incoming SMS push notification */}
-              <div className="mt-4 p-3 bg-[#081420] border border-[#5FD3BF]/40 rounded-lg text-xs space-y-1">
-                <div className="flex items-center justify-between text-[#5FD3BF] font-mono font-semibold text-[11px]">
-                  <span>📲 INCOMING SMS GATEWAY</span>
-                  <span className="text-[#A9B7BF]">12:30 PM</span>
+              {/* Simulated incoming SMS push notification / carrier telemetry */}
+              {scenario.smsBannerText && (
+                <div className="mt-4 p-3 bg-[#081420] border border-[#5FD3BF]/40 rounded-lg text-xs space-y-1">
+                  <div className="flex items-center justify-between text-[#5FD3BF] font-mono font-semibold text-[11px]">
+                    <span>📲 TELEMETRY &amp; GATEWAY NOTICE</span>
+                    <span className="text-[#A9B7BF]">LIVE</span>
+                  </div>
+                  <p className="text-[#EEF3F1] font-mono text-[11px]">
+                    {scenario.smsBannerText}
+                  </p>
                 </div>
-                <p className="text-[#EEF3F1] font-mono text-[11px]">
-                  &quot;Instagram code: <span className="text-[#EBC385] font-bold underline">829-410</span>. DO NOT share this. It can be used to reset your Instagram password.&quot;
-                </p>
-              </div>
+              )}
 
               {/* User selected response in chat */}
               {selectedOptionId && (
@@ -146,7 +196,7 @@ export const SocialEngSim: React.FC<SocialEngSimProps> = ({ onBreach, onSuccess 
                 Select Your Defensive Response
               </h3>
               <p className="text-xs text-[#4B5A66] mt-0.5">
-                Attackers exploit social trust and artificial time pressure to bypass technical 2FA safeguards.
+                Attackers exploit social trust, executive authority, and artificial time pressure to bypass security controls.
               </p>
             </div>
 
@@ -192,11 +242,11 @@ export const SocialEngSim: React.FC<SocialEngSimProps> = ({ onBreach, onSuccess 
 
             {/* Psychological Traps Explainer */}
             <div className="p-4 rounded-xl bg-[#F3F5F1] border border-[#D9DDD3] space-y-2 text-xs">
-              <span className="font-semibold text-[#0E2238] block">Social Engineering Deconstruction:</span>
+              <span className="font-semibold text-[#0E2238] block">Actionable Defense Rules:</span>
               <ul className="space-y-1.5 text-[#4B5A66] text-xs leading-relaxed">
-                <li>• <strong className="text-[#16232F]">Urgency:</strong> &quot;2 votes away&quot; suppresses out-of-band verification.</li>
-                <li>• <strong className="text-[#16232F]">Relational Coercion:</strong> Exploits peer loyalty to bypass SMS reset warnings.</li>
-                <li>• <strong className="text-[#16232F]">Out-of-Band Verification:</strong> Always verify unusual requests via a direct voice call or in person.</li>
+                {scenario.forensicDebrief.actionableTips.map((tip, idx) => (
+                  <li key={idx}>• {tip}</li>
+                ))}
               </ul>
             </div>
           </div>

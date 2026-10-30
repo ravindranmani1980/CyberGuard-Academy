@@ -54,6 +54,14 @@ export const ModuleCompletionRadialChart: React.FC<ModuleCompletionRadialChartPr
   // Ordered from outer ring to inner ring for Recharts RadialBarChart
   const radialData: RadialModuleDatum[] = [
     {
+      name: 'Spam SMS & BEC Pretexting',
+      shortCode: 'MOD-06',
+      simType: 'smishing',
+      completion: stats.categoryMastery.socialEng,
+      fill: '#EBC385',
+      targetNote: 'Lost valut money scams, Boss financial report & pre-launch SMS drills',
+    },
+    {
       name: 'Incident Response & Ransomware',
       shortCode: 'MOD-05',
       simType: 'ransomware',
@@ -112,7 +120,7 @@ export const ModuleCompletionRadialChart: React.FC<ModuleCompletionRadialChartPr
             Multi-Module Radial Telemetry
           </span>
           <span className="font-mono text-[11px] font-semibold text-[#0E2238] bg-white px-2 py-0.5 rounded border border-[#C7CDC0]">
-            {fullyMasteredCount}/5 Modules ≥ 80%
+            {fullyMasteredCount}/6 Modules ≥ 80%
           </span>
         </div>
 
@@ -155,7 +163,7 @@ export const ModuleCompletionRadialChart: React.FC<ModuleCompletionRadialChartPr
         </div>
 
         <div className="w-full pt-2 border-t border-[#D9DDD3] flex items-center justify-between text-[11px] text-[#4B5A66] font-mono">
-          <span>Rings: MOD-01 (Outer) → MOD-05 (Inner)</span>
+          <span>Rings: MOD-01 (Inner) → MOD-06 (Outer)</span>
           <span className="text-[#0E2238] font-semibold">100% Scale</span>
         </div>
       </div>
