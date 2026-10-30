@@ -316,7 +316,7 @@ export const SmishingSim: React.FC<SmishingSimProps> = ({ onBreach, onSuccess })
             {/* Outcome Banner & Next Scenario Button */}
             {outcome && (
               <div
-                className={`p-4 rounded-xl border text-xs leading-relaxed space-y-3 ${
+                className={`p-4 rounded-xl border text-xs leading-relaxed space-y-3 animate-appreciation-pop ${
                   outcome.isVulnerable
                     ? 'bg-red-50 border-red-200 text-red-950'
                     : 'bg-emerald-50 border-emerald-200 text-emerald-950'
@@ -327,12 +327,12 @@ export const SmishingSim: React.FC<SmishingSimProps> = ({ onBreach, onSuccess })
                     {outcome.isVulnerable ? (
                       <AlertTriangle className="w-4 h-4 text-red-700" />
                     ) : (
-                      <CheckCircle className="w-4 h-4 text-emerald-700" />
+                      <CheckCircle className="w-4 h-4 text-emerald-700 animate-emblem-celebrate" />
                     )}
                     <span>
                       {outcome.isVulnerable
                         ? 'Smishing Trap Triggered — Security Breach'
-                        : 'Spam Text Neutralized & Verified Out-of-Band'}
+                        : 'Well Done! Spam Text Neutralized & Verified Out-of-Band'}
                     </span>
                   </h5>
                   <p>{outcome.text}</p>

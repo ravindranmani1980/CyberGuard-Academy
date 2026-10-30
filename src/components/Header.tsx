@@ -1,12 +1,15 @@
 import React from 'react';
-import { Volume2, VolumeX, ShieldAlert } from 'lucide-react';
-import { playClickSound, setSoundEnabled, getSoundEnabled } from '../utils/audio';
+import { Volume2, VolumeX, ShieldAlert, Keyboard } from 'lucide-react';
+import { playClickSound } from '../utils/audio';
 
 interface HeaderProps {
   activeTab: 'dashboard' | 'simulations' | 'radar' | 'leaderboard' | 'privacy';
   setActiveTab: (tab: 'dashboard' | 'simulations' | 'radar' | 'leaderboard' | 'privacy') => void;
   onOpenPrivacy: () => void;
   onTriggerQuickDrill: () => void;
+  onOpenShortcuts: () => void;
+  muted: boolean;
+  onToggleSound: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -14,18 +17,10 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   onOpenPrivacy,
   onTriggerQuickDrill,
+  onOpenShortcuts,
+  muted,
+  onToggleSound,
 }) => {
-  const [muted, setMuted] = React.useState(!getSoundEnabled());
-
-  const toggleSound = () => {
-    const nextState = !muted;
-    setMuted(nextState);
-    setSoundEnabled(!nextState);
-    if (nextState === false) {
-      playClickSound();
-    }
-  };
-
   const handleNavClick = (tab: 'dashboard' | 'simulations' | 'radar' | 'leaderboard' | 'privacy') => {
     playClickSound();
     if (tab === 'privacy') {
@@ -37,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="rm-site-header px-6">
-      <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-8 min-h-[64px] py-2">
+      <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-6 min-h-[64px] py-2">
         {/* Zone 1: Brand lockup matching Postrix (.rm-brand + .rm-mono-mark) */}
         <a
           href="#dashboard"
@@ -55,67 +50,108 @@ export const Header: React.FC<HeaderProps> = ({
           </span>
         </a>
 
-        {/* Zone 2: Navigation links matching Postrix (.rm-navlink / .rm-navlink-active) */}
-        <nav aria-label="Main navigation" className="hidden md:flex flex-wrap items-center gap-x-6 gap-y-1">
+        {/* Zone 2: Navigation links matching Postrix (.rm-navlink / .rm-navlink-active) with power-user hotkey badges */}
+        <nav aria-label="Main navigation" className="hidden lg:flex flex-wrap items-center gap-x-5 gap-y-1">
           <button
             type="button"
             onClick={() => handleNavClick('dashboard')}
+            title="Posture Overview (Shortcut: D)"
+            aria-keyshortcuts="d"
             aria-current={activeTab === 'dashboard' ? 'page' : undefined}
-            className={`rm-navlink whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`rm-navlink whitespace-nowrap shrink-0 cursor-pointer inline-flex items-center gap-1.5 ${
               activeTab === 'dashboard' ? 'rm-navlink-active' : ''
             }`}
           >
-            Posture Overview
+            <span>Posture Overview</span>
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#102236] border border-[#3E6E86]/50 text-[#5FD3BF] opacity-80">
+              D
+            </kbd>
           </button>
 
           <button
             type="button"
             onClick={() => handleNavClick('simulations')}
+            title="Interactive Drills (Shortcut: S)"
+            aria-keyshortcuts="s"
             aria-current={activeTab === 'simulations' ? 'page' : undefined}
-            className={`rm-navlink whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`rm-navlink whitespace-nowrap shrink-0 cursor-pointer inline-flex items-center gap-1.5 ${
               activeTab === 'simulations' ? 'rm-navlink-active' : ''
             }`}
           >
-            Interactive Drills
+            <span>Interactive Drills</span>
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#102236] border border-[#3E6E86]/50 text-[#5FD3BF] opacity-80">
+              S
+            </kbd>
           </button>
 
           <button
             type="button"
             onClick={() => handleNavClick('radar')}
+            title="Peer Threat Radar (Shortcut: R)"
+            aria-keyshortcuts="r"
             aria-current={activeTab === 'radar' ? 'page' : undefined}
-            className={`rm-navlink whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`rm-navlink whitespace-nowrap shrink-0 cursor-pointer inline-flex items-center gap-1.5 ${
               activeTab === 'radar' ? 'rm-navlink-active' : ''
             }`}
           >
-            Peer Threat Radar
+            <span>Peer Threat Radar</span>
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#102236] border border-[#3E6E86]/50 text-[#5FD3BF] opacity-80">
+              R
+            </kbd>
           </button>
 
           <button
             type="button"
             onClick={() => handleNavClick('leaderboard')}
+            title="Guardian League (Shortcut: L)"
+            aria-keyshortcuts="l"
             aria-current={activeTab === 'leaderboard' ? 'page' : undefined}
-            className={`rm-navlink whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`rm-navlink whitespace-nowrap shrink-0 cursor-pointer inline-flex items-center gap-1.5 ${
               activeTab === 'leaderboard' ? 'rm-navlink-active' : ''
             }`}
           >
-            Guardian League
+            <span>Guardian League</span>
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#102236] border border-[#3E6E86]/50 text-[#5FD3BF] opacity-80">
+              L
+            </kbd>
           </button>
 
           <button
             type="button"
             onClick={() => handleNavClick('privacy')}
-            className="rm-navlink whitespace-nowrap shrink-0 cursor-pointer"
+            title="Zero-Data Governance (Shortcut: P)"
+            aria-keyshortcuts="p"
+            className="rm-navlink whitespace-nowrap shrink-0 cursor-pointer inline-flex items-center gap-1.5"
           >
-            Zero-Data Governance
+            <span>Zero-Data Governance</span>
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#102236] border border-[#3E6E86]/50 text-[#5FD3BF] opacity-80">
+              P
+            </kbd>
           </button>
         </nav>
 
-        {/* Zone 3: Primary Action & Audio Control */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        {/* Zone 3: Primary Action, Shortcuts & Audio Control */}
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
-            onClick={toggleSound}
-            title={muted ? 'Unmute Audio' : 'Mute Audio'}
+            onClick={() => {
+              playClickSound();
+              onOpenShortcuts();
+            }}
+            title="Keyboard Shortcuts (Shortcut: ?)"
+            aria-keyshortcuts="?"
+            aria-label="Keyboard Shortcuts"
+            className="xh-btn !px-2.5 !py-2"
+          >
+            <Keyboard className="w-4 h-4 text-[#5FD3BF]" />
+            <kbd className="hidden sm:inline text-[10px] font-mono text-[#EBC385]">?</kbd>
+          </button>
+
+          <button
+            type="button"
+            onClick={onToggleSound}
+            title={muted ? 'Unmute Audio (Shortcut: M)' : 'Mute Audio (Shortcut: M)'}
+            aria-keyshortcuts="m"
             className="xh-btn !px-2.5 !py-2"
             aria-label={muted ? 'Unmute' : 'Mute'}
           >
@@ -128,16 +164,21 @@ export const Header: React.FC<HeaderProps> = ({
               playClickSound();
               onTriggerQuickDrill();
             }}
+            title="Start Cyber Drill (Shortcut: C)"
+            aria-keyshortcuts="c"
             className="xh-btn primary whitespace-nowrap shrink-0"
           >
             <ShieldAlert className="w-4 h-4" />
             <span>Start Cyber Drill</span>
+            <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#04211B]/25 text-[#04211B] font-bold">
+              C
+            </kbd>
           </button>
         </div>
       </div>
 
-      {/* Mobile Subnavigation Bar */}
-      <div className="md:hidden flex flex-wrap items-center justify-around gap-2 px-1 py-2 border-t border-[#3E6E86]/35 text-xs">
+      {/* Tablet / Mobile Subnavigation Bar */}
+      <div className="lg:hidden flex flex-wrap items-center justify-around gap-2 px-1 py-2 border-t border-[#3E6E86]/35 text-xs">
         <button
           type="button"
           onClick={() => handleNavClick('dashboard')}
@@ -145,7 +186,7 @@ export const Header: React.FC<HeaderProps> = ({
             activeTab === 'dashboard' ? 'rm-navlink-active' : ''
           }`}
         >
-          Overview
+          Overview [D]
         </button>
         <button
           type="button"
@@ -154,7 +195,7 @@ export const Header: React.FC<HeaderProps> = ({
             activeTab === 'simulations' ? 'rm-navlink-active' : ''
           }`}
         >
-          Drills
+          Drills [S]
         </button>
         <button
           type="button"
@@ -163,7 +204,7 @@ export const Header: React.FC<HeaderProps> = ({
             activeTab === 'radar' ? 'rm-navlink-active' : ''
           }`}
         >
-          Threat Radar
+          Threat Radar [R]
         </button>
         <button
           type="button"
@@ -172,14 +213,14 @@ export const Header: React.FC<HeaderProps> = ({
             activeTab === 'leaderboard' ? 'rm-navlink-active' : ''
           }`}
         >
-          League
+          League [L]
         </button>
         <button
           type="button"
           onClick={() => handleNavClick('privacy')}
           className="rm-navlink !text-xs whitespace-nowrap cursor-pointer"
         >
-          Privacy
+          Privacy [P]
         </button>
       </div>
     </header>

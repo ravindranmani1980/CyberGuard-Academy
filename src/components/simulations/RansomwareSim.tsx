@@ -183,10 +183,10 @@ export const RansomwareSim: React.FC<RansomwareSimProps> = ({ onBreach, onSucces
 
             {/* Victory Resolution Card */}
             {isResolved && (
-              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs space-y-2">
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs space-y-2 animate-appreciation-pop">
                 <h4 className="font-bold text-sm flex items-center gap-2 text-emerald-900">
-                  <CheckCircle className="w-5 h-5 text-emerald-700" />
-                  <span>Incident Contained: Network Isolated &amp; Process Terminated</span>
+                  <CheckCircle className="w-5 h-5 text-emerald-700 animate-emblem-celebrate" />
+                  <span>Outstanding Triage! Incident Contained: Network Isolated &amp; Process Terminated</span>
                 </h4>
                 <p className="leading-relaxed">
                   By disconnecting network interfaces first, you prevented lateral movement to shared network drives. Terminating the rogue binary stopped local file encryption, and maintaining air-gapped backups ensures full recovery without paying ransom.

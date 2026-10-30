@@ -302,14 +302,14 @@ export const PhishingSim: React.FC<PhishingSimProps> = ({ onBreach, onSuccess })
 
           {/* Dynamic Immediate Feedback Banner */}
           {feedback && (
-            <div className={`p-5 border-t text-xs ${
+            <div className={`p-5 border-t text-xs animate-appreciation-pop ${
               feedback.isSuccess
                 ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
                 : 'bg-amber-50 border-amber-200 text-amber-950'
             }`}>
               <div className="flex items-center justify-between mb-1.5">
                 <h4 className="font-bold text-sm flex items-center gap-1.5">
-                  {feedback.isSuccess ? <CheckCircle className="w-4 h-4 text-emerald-700" /> : <AlertTriangle className="w-4 h-4 text-amber-700" />}
+                  {feedback.isSuccess ? <CheckCircle className="w-4 h-4 text-emerald-700 animate-emblem-celebrate" /> : <AlertTriangle className="w-4 h-4 text-amber-700" />}
                   <span>{feedback.title}</span>
                 </h4>
                 {selectedEmailIndex < PHISHING_EMAILS.length - 1 && (

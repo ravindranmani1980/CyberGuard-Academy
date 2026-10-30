@@ -101,6 +101,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="xh-kicker">
           <span className="k">Human Cyber Defense Posture & Interactive Threat Governance</span>
           <div className="flex flex-wrap items-center gap-2">
+            {stats.playerName && (
+              <span className="tag !border-[#5FD3BF]/60 !text-[#5FD3BF]">
+                Player: {stats.playerName}
+              </span>
+            )}
             <span className="tag">Level {rankInfo.level} · {rankInfo.rankTitle}</span>
             <span className="tag">{stats.streakDays}d Active Streak</span>
             <span className="tag">Zero-Knowledge Sandbox</span>
@@ -116,7 +121,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div>
               <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="text-xl sm:text-2xl font-semibold text-[#EEF3F1] tracking-tight font-serif">
-                  Maniq Threat Guard — {rankInfo.rankTitle} Posture
+                  Maniq Threat Guard — {stats.playerName ? `${stats.playerName}'s` : rankInfo.rankTitle} Posture
                 </h1>
               </div>
               <p className="text-xs sm:text-sm text-[#A9B7BF] mt-1 max-w-2xl leading-relaxed">

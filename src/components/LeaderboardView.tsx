@@ -14,6 +14,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ stats }) => {
       if (u.isCurrentUser) {
         return {
           ...u,
+          handle: stats.playerName?.trim() || u.handle,
           xp: stats.xp,
           badgesCount: stats.unlockedBadgeIds.length,
         };
@@ -23,7 +24,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ stats }) => {
 
     list.sort((a, b) => b.xp - a.xp);
     return list.map((item, idx) => ({ ...item, rank: idx + 1 }));
-  }, [stats.xp, stats.unlockedBadgeIds.length]);
+  }, [stats.playerName, stats.xp, stats.unlockedBadgeIds.length]);
 
   return (
     <div className="space-y-8">

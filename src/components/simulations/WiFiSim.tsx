@@ -250,13 +250,13 @@ export const WiFiSim: React.FC<WiFiSimProps> = ({ onBreach, onSuccess }) => {
               </div>
 
               {message && (
-                <div className={`p-4 rounded-lg border ${
+                <div className={`p-4 rounded-lg border animate-appreciation-pop ${
                   message.type === 'warn'
                     ? 'bg-amber-50 border-amber-200 text-amber-950'
                     : 'bg-emerald-50 border-emerald-200 text-emerald-950'
                 }`}>
                   <h5 className="font-bold text-xs mb-1 flex items-center gap-1.5">
-                    {message.type === 'warn' ? <AlertTriangle className="w-4 h-4 text-amber-700" /> : <CheckCircle className="w-4 h-4 text-emerald-700" />}
+                    {message.type === 'warn' ? <AlertTriangle className="w-4 h-4 text-amber-700" /> : <CheckCircle className="w-4 h-4 text-emerald-700 animate-emblem-celebrate" />}
                     <span>{message.text}</span>
                   </h5>
                   <ul className="mt-2 space-y-1 text-xs">

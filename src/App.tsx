@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { Sparkles } from 'lucide-react';
 import { UserStats, BreachIncident, SimulationType, PeerThreat } from './types';
 import { loadUserStats, saveUserStats, loadBreachIncidents, saveBreachIncidents, calculateRankAndLevel } from './utils/storage';
-import { playLevelUpSound, playBreachAlertSound, playClickSound } from './utils/audio';
+import { playLevelUpSound, playBreachAlertSound, playClickSound, setSoundEnabled, getSoundEnabled } from './utils/audio';
 import { Header } from './components/Header';
 import { Dashboard } from './components/Dashboard';
 import { SimulationHub } from './components/SimulationHub';
@@ -11,7 +11,38 @@ import { PeerThreatRadar } from './components/PeerThreatRadar';
 import { LeaderboardView } from './components/LeaderboardView';
 import { BreachModal } from './components/BreachModal';
 import { PrivacyShieldModal } from './components/PrivacyShieldModal';
+import { VictoryAppreciationOverlay, AppreciationEvent } from './components/VictoryAppreciationOverlay';
+import { PlayerDrillEntryModal } from './components/PlayerDrillEntryModal';
+import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { BADGES } from './data/badges';
+
+const APPRECIATION_MESSAGES: Record<string, { headline: string; detail: string; flag: string }> = {
+  phishing: {
+    headline: 'Well Done! Phishing Threat Neutralized!',
+    detail: 'Your header & link verification protected the network from credential harvesting.',
+    flag: 'THM{PHISH-BLOCKED}',
+  },
+  network: {
+    headline: 'Spot-On Move! Evil Twin MITM Blocked!',
+    detail: 'You verified BSSID encryption and thwarted wireless packet interception.',
+    flag: 'THM{AIRSPACE-SECURED}',
+  },
+  socialEng: {
+    headline: 'Brilliant Defense! Impersonator Foiled!',
+    detail: 'Out-of-Band verification stopped an urgent social engineering pretext.',
+    flag: 'THM{THREAT-BLOCKED}',
+  },
+  passwords: {
+    headline: 'Outstanding! High-Entropy Passphrase Forged!',
+    detail: 'Your passphrase resists 350B-hash/sec offline GPU cracking clusters.',
+    flag: 'THM{ENTROPY-VERIFIED}',
+  },
+  incidentResponse: {
+    headline: 'Heroic Triage! Ransomware Contained in Time!',
+    detail: 'Rapid network isolation and process termination saved local files.',
+    flag: 'THM{THREAT-BLOCKED}',
+  },
+};
 
 export default function App() {
   const [stats, setStats] = useState<UserStats>(() => loadUserStats());
@@ -19,11 +50,28 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'simulations' | 'radar' | 'leaderboard' | 'privacy'>('dashboard');
   const [currentSim, setCurrentSim] = useState<SimulationType>('phishing');
 
-  // Modal states
+  // Modal, Audio & Appreciation states
   const [activeBreachIncident, setActiveBreachIncident] = useState<BreachIncident | null>(null);
   const [isBreachModalOpen, setIsBreachModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [isDrillEntryModalOpen, setIsDrillEntryModalOpen] = useState(false);
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
+  const [muted, setMuted] = useState<boolean>(() => !getSoundEnabled());
+  const [pendingSimType, setPendingSimType] = useState<SimulationType>('phishing');
   const [toastMessage, setToastMessage] = useState<{ title: string; subtitle: string } | null>(null);
+  const [appreciationEvent, setAppreciationEvent] = useState<AppreciationEvent | null>(null);
+  const [correctMoveStreak, setCorrectMoveStreak] = useState<number>(0);
+
+  const handleToggleSound = () => {
+    setMuted(prev => {
+      const nextMuted = !prev;
+      setSoundEnabled(!nextMuted);
+      if (!nextMuted) {
+        playClickSound();
+      }
+      return nextMuted;
+    });
+  };
 
   // Sync to local client sandbox
   useEffect(() => {
@@ -37,6 +85,8 @@ export default function App() {
   // Handle immediate breach detection
   const handleBreach = (incident: BreachIncident) => {
     playBreachAlertSound();
+    setCorrectMoveStreak(0);
+    setAppreciationEvent(null);
     setActiveBreachIncident(incident);
     setIsBreachModalOpen(true);
 
@@ -64,6 +114,20 @@ export default function App() {
 
   // Handle successful drill or threat detection
   const handleSuccess = (xpGained: number, categoryKey: string, badgeIdToUnlock?: string) => {
+    const nextStreak = correctMoveStreak + 1;
+    setCorrectMoveStreak(nextStreak);
+
+    const praiseInfo = APPRECIATION_MESSAGES[categoryKey] || APPRECIATION_MESSAGES.incidentResponse;
+    setAppreciationEvent({
+      id: Date.now(),
+      xpGained,
+      category: categoryKey,
+      streakCount: nextStreak,
+      praiseHeadline: praiseInfo.headline,
+      praiseDetail: praiseInfo.detail,
+      flagToken: praiseInfo.flag,
+    });
+
     setStats(prev => {
       const oldRank = calculateRankAndLevel(prev.xp);
       const newXp = prev.xp + xpGained;
@@ -130,19 +194,44 @@ export default function App() {
     });
   };
 
-  // Handle quick drill from header button
+  // Handle "Start Cyber Drill" button from header — opens game registration modal asking for Player Name
   const handleTriggerQuickDrill = () => {
     playClickSound();
     const simTypes: SimulationType[] = ['phishing', 'wifi', 'social_eng', 'smishing', 'password', 'ransomware'];
     const randomSim = simTypes[Math.floor(Math.random() * simTypes.length)];
-    setCurrentSim(randomSim);
-    setActiveTab('simulations');
+    setPendingSimType(randomSim);
+    setIsDrillEntryModalOpen(true);
   };
 
-  // Launch specific simulation from dashboard card
+  // Launch specific simulation from dashboard card — ask for Player Name if not yet set, or open entry modal
   const handleLaunchSimulation = (simType: SimulationType) => {
-    setCurrentSim(simType);
+    setPendingSimType(simType);
+    setIsDrillEntryModalOpen(true);
+  };
+
+  // Confirm player name & enter selected drill
+  const handleConfirmEnterDrill = (playerName: string, selectedSim: SimulationType) => {
+    setStats(prev => ({
+      ...prev,
+      playerName,
+    }));
+    setCurrentSim(selectedSim);
+    setIsDrillEntryModalOpen(false);
     setActiveTab('simulations');
+    setToastMessage({
+      title: `Welcome to the Arena, ${playerName}!`,
+      subtitle: 'Cyber drill initialized. Inspect telemetry and make your defensive move.',
+    });
+  };
+
+  // Handle top nav tab changes (prompt for player name if entering simulations for the first time)
+  const handleChangeTab = (tab: 'dashboard' | 'simulations' | 'radar' | 'leaderboard' | 'privacy') => {
+    if (tab === 'simulations' && !stats.playerName) {
+      setPendingSimType(currentSim);
+      setIsDrillEntryModalOpen(true);
+      return;
+    }
+    setActiveTab(tab);
   };
 
   // Verify peer threat
@@ -240,14 +329,144 @@ export default function App() {
     }
   }, [toastMessage]);
 
+  // Auto-dismiss appreciation overlay after 5.5s
+  useEffect(() => {
+    if (appreciationEvent) {
+      const t = setTimeout(() => setAppreciationEvent(null), 5500);
+      return () => clearTimeout(t);
+    }
+  }, [appreciationEvent]);
+
+  // Execute shortcut command by key
+  const executeShortcutAction = (lowerKey: string) => {
+    if (lowerKey === 'd') {
+      playClickSound();
+      setActiveTab('dashboard');
+    } else if (lowerKey === 's') {
+      playClickSound();
+      handleChangeTab('simulations');
+    } else if (lowerKey === 'r') {
+      playClickSound();
+      setActiveTab('radar');
+    } else if (lowerKey === 'l') {
+      playClickSound();
+      setActiveTab('leaderboard');
+    } else if (lowerKey === 'p') {
+      playClickSound();
+      setIsPrivacyModalOpen(prev => !prev);
+    } else if (lowerKey === 'c') {
+      handleTriggerQuickDrill();
+    } else if (lowerKey === 'm') {
+      handleToggleSound();
+    } else if (lowerKey === '?') {
+      playClickSound();
+      setIsShortcutsModalOpen(prev => !prev);
+    }
+  };
+
+  // Global keyboard shortcuts listener for power users
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      // Allow Escape to close any open modal or overlay
+      if (e.key === 'Escape') {
+        if (isShortcutsModalOpen) {
+          setIsShortcutsModalOpen(false);
+          return;
+        }
+        if (isDrillEntryModalOpen) {
+          setIsDrillEntryModalOpen(false);
+          return;
+        }
+        if (isPrivacyModalOpen) {
+          setIsPrivacyModalOpen(false);
+          return;
+        }
+        if (isBreachModalOpen) {
+          setIsBreachModalOpen(false);
+          return;
+        }
+        if (appreciationEvent) {
+          setAppreciationEvent(null);
+          return;
+        }
+      }
+
+      // Ignore shortcuts when typing in inputs, textareas, selects, or contentEditable elements
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      // Ignore when Ctrl, Meta, or Alt modifiers are held
+      if (e.ctrlKey || e.metaKey || e.altKey) {
+        return;
+      }
+
+      // Toggle shortcuts help modal on '?'
+      if (e.key === '?') {
+        e.preventDefault();
+        playClickSound();
+        setIsShortcutsModalOpen(prev => !prev);
+        return;
+      }
+
+      // Do not trigger view jumps while a modal dialog is open
+      if (
+        isDrillEntryModalOpen ||
+        isPrivacyModalOpen ||
+        isBreachModalOpen ||
+        isShortcutsModalOpen
+      ) {
+        return;
+      }
+
+      const lower = e.key.toLowerCase();
+      if (['d', 's', 'r', 'l', 'p', 'c', 'm'].includes(lower)) {
+        e.preventDefault();
+        executeShortcutAction(lower);
+        return;
+      }
+
+      // Numeric keys 1-6 switch active simulation module when inside Interactive Drills
+      if (activeTab === 'simulations' && ['1', '2', '3', '4', '5', '6'].includes(e.key)) {
+        e.preventDefault();
+        playClickSound();
+        const orderedModules: SimulationType[] = [
+          'phishing',
+          'wifi',
+          'social_eng',
+          'password',
+          'ransomware',
+          'smishing',
+        ];
+        const idx = parseInt(e.key, 10) - 1;
+        if (orderedModules[idx]) {
+          setCurrentSim(orderedModules[idx]);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  });
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F3F5F1] text-[#16232F]">
       {/* Postrix Site Header */}
       <Header
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleChangeTab}
         onOpenPrivacy={() => setIsPrivacyModalOpen(true)}
         onTriggerQuickDrill={handleTriggerQuickDrill}
+        onOpenShortcuts={() => setIsShortcutsModalOpen(true)}
+        muted={muted}
+        onToggleSound={handleToggleSound}
       />
 
       {/* Main Viewport Container */}
@@ -265,6 +484,11 @@ export default function App() {
         {activeTab === 'simulations' && (
           <SimulationHub
             initialSim={currentSim}
+            stats={stats}
+            onOpenPlayerEntry={(simType) => {
+              setPendingSimType(simType || currentSim);
+              setIsDrillEntryModalOpen(true);
+            }}
             onBreach={handleBreach}
             onSuccess={handleSuccess}
           />
@@ -286,6 +510,22 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* Game Player Registration & Cyber Drill Mission Entry Modal */}
+      <PlayerDrillEntryModal
+        isOpen={isDrillEntryModalOpen}
+        initialPlayerName={stats.playerName}
+        initialSimType={pendingSimType}
+        onClose={() => setIsDrillEntryModalOpen(false)}
+        onConfirmEnterDrill={handleConfirmEnterDrill}
+      />
+
+      {/* Global Power-User Keyboard Shortcuts Modal */}
+      <KeyboardShortcutsModal
+        isOpen={isShortcutsModalOpen}
+        onClose={() => setIsShortcutsModalOpen(false)}
+        onTriggerShortcut={executeShortcutAction}
+      />
 
       {/* Immediate Security Breach Alert Modal */}
       <BreachModal
@@ -316,9 +556,16 @@ export default function App() {
         }}
       />
 
+      {/* Celebratory Player Appreciation Animation Overlay on Correct Move */}
+      <VictoryAppreciationOverlay
+        event={appreciationEvent}
+        playerName={stats.playerName}
+        onDismiss={() => setAppreciationEvent(null)}
+      />
+
       {/* Dynamic Toast Feedback Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#081420] border border-[#3E6E86]/60 p-4 rounded-xl shadow-2xl flex items-start gap-3 max-w-sm text-[#EEF3F1]">
+        <div className="fixed bottom-6 left-6 z-50 bg-[#081420] border border-[#3E6E86]/60 p-4 rounded-xl shadow-2xl flex items-start gap-3 max-w-sm text-[#EEF3F1]">
           <div className="rm-mono-mark !w-8 !h-8 !text-xs shrink-0">
             <Sparkles className="w-4 h-4 text-[#062019]" />
           </div>
@@ -367,6 +614,17 @@ export default function App() {
                 </a>
                 )
               </span>
+              <span aria-hidden="true">·</span>
+              <button
+                type="button"
+                onClick={() => {
+                  playClickSound();
+                  setIsShortcutsModalOpen(true);
+                }}
+                className="text-[#C9D3D9] hover:text-[#5FD3BF] transition-colors cursor-pointer font-mono"
+              >
+                Keyboard Shortcuts [?]
+              </button>
               <span aria-hidden="true">·</span>
               <button
                 type="button"

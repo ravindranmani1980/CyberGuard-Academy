@@ -8,6 +8,7 @@ export interface SessionScorePoint {
 }
 
 export interface UserStats {
+  playerName?: string;
   xp: number;
   level: number;
   rankTitle: string;
