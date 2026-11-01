@@ -15,6 +15,7 @@ import { VictoryAppreciationOverlay, AppreciationEvent } from './components/Vict
 import { PlayerDrillEntryModal } from './components/PlayerDrillEntryModal';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { BADGES } from './data/badges';
+import { getDailyChallengeForDate } from './utils/dailyChallenge';
 
 const APPRECIATION_MESSAGES: Record<string, { headline: string; detail: string; flag: string }> = {
   phishing: {
@@ -61,6 +62,11 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<{ title: string; subtitle: string } | null>(null);
   const [appreciationEvent, setAppreciationEvent] = useState<AppreciationEvent | null>(null);
   const [correctMoveStreak, setCorrectMoveStreak] = useState<number>(0);
+
+  const dailyChallenge = getDailyChallengeForDate(stats.dailyChallengeOffset || 0);
+  const isDailyChallengeCompleted = (stats.dailyChallengeCompletedDates || []).includes(
+    dailyChallenge.dateKey
+  );
 
   const handleToggleSound = () => {
     setMuted(prev => {
@@ -321,6 +327,61 @@ export default function App() {
     setIsBreachModalOpen(true);
   };
 
+  // Complete 24-Hour Daily Challenge with unique constraint satisfied
+  const handleCompleteDailyChallenge = () => {
+    playLevelUpSound();
+    try {
+      confetti({
+        particleCount: 95,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#D79A45', '#EBC385', '#2BB5A0', '#5FD3BF', '#EEF3F1'],
+      });
+    } catch {
+      // Ignore
+    }
+
+    setStats((prev) => {
+      const completedDates = prev.dailyChallengeCompletedDates || [];
+      if (completedDates.includes(dailyChallenge.dateKey)) {
+        return prev;
+      }
+      const nextXp = prev.xp + dailyChallenge.bonusXp;
+      const newRank = calculateRankAndLevel(nextXp);
+      const nextBadges = prev.unlockedBadgeIds.includes(dailyChallenge.badgeId)
+        ? prev.unlockedBadgeIds
+        : [...prev.unlockedBadgeIds, dailyChallenge.badgeId];
+
+      return {
+        ...prev,
+        xp: nextXp,
+        level: newRank.level,
+        rankTitle: newRank.rankTitle,
+        unlockedBadgeIds: nextBadges,
+        dailyChallengeCompletedDates: [...completedDates, dailyChallenge.dateKey],
+      };
+    });
+
+    setToastMessage({
+      title: `Daily Sentinel Earned! +${dailyChallenge.bonusXp} Bonus XP`,
+      subtitle: `Completed ${dailyChallenge.operationName} (${dailyChallenge.moduleCode}) within the tactical constraint.`,
+    });
+  };
+
+  // Simulate 24-hour reset to rotate to the next day's Daily Challenge
+  const handleSimulate24hReset = () => {
+    const nextOffset = (stats.dailyChallengeOffset || 0) + 1;
+    const nextChallenge = getDailyChallengeForDate(nextOffset);
+    setStats((prev) => ({
+      ...prev,
+      dailyChallengeOffset: nextOffset,
+    }));
+    setToastMessage({
+      title: `24-Hour Cycle Reset → ${nextChallenge.operationName}`,
+      subtitle: `New Daily Challenge active: ${nextChallenge.missionTitle} (${nextChallenge.moduleCode}).`,
+    });
+  };
+
   // Auto-dismiss toast after 4s
   useEffect(() => {
     if (toastMessage) {
@@ -475,6 +536,9 @@ export default function App() {
           <Dashboard
             stats={stats}
             incidents={incidents}
+            dailyChallenge={dailyChallenge}
+            isDailyChallengeCompleted={isDailyChallengeCompleted}
+            onSimulate24hReset={handleSimulate24hReset}
             onLaunchSimulation={handleLaunchSimulation}
             onOpenPrivacy={() => setIsPrivacyModalOpen(true)}
             onOpenBreachDetails={handleOpenBreachDetails}
@@ -485,6 +549,9 @@ export default function App() {
           <SimulationHub
             initialSim={currentSim}
             stats={stats}
+            dailyChallenge={dailyChallenge}
+            isDailyChallengeCompleted={isDailyChallengeCompleted}
+            onCompleteDailyChallenge={handleCompleteDailyChallenge}
             onOpenPlayerEntry={(simType) => {
               setPendingSimType(simType || currentSim);
               setIsDrillEntryModalOpen(true);
@@ -586,7 +653,7 @@ export default function App() {
               </span>
               <span>
                 <strong className="font-serif text-sm font-semibold text-[#F3F5F1]">
-                  Maniq <span className="text-[#D79A45]">Threat Guard</span>
+                  Maniq <span className="text-[#A9B7BF] font-normal">|</span> <span className="text-[#D79A45]">Arcade</span>
                 </strong>{' '}
                 — Interactive Cyber Defense Posture &amp; Threat Simulation Platform
               </span>
@@ -642,7 +709,7 @@ export default function App() {
           {/* Explicit Privacy & No-Advertisement Disclaimer */}
           <div className="pt-3 border-t border-[#3E6E86]/25 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-[#A9B7BF]">
             <span>
-              <strong className="text-[#EBC385]">Disclaimer:</strong> Maniq Threat Guard will not store any personal records on external servers and will never send advertisement or promotional emails.
+              <strong className="text-[#EBC385]">Disclaimer:</strong> Maniq | Arcade will not store any personal records on external servers and will never send advertisement or promotional emails.
             </span>
             <span className="text-[#5FD3BF]">100% Client-Side Sandbox · Zero Sign-In Required</span>
           </div>

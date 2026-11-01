@@ -1,16 +1,20 @@
 import React from 'react';
 import { Shield, Award, Flame, AlertOctagon, CheckCircle2, ChevronRight, ArrowUpRight, Lock, Terminal, Wifi, Mail, MessageSquare, Smartphone, KeyRound } from 'lucide-react';
-import { UserStats, BreachIncident, SimulationType } from '../types';
+import { UserStats, BreachIncident, SimulationType, DailyChallengeSpec } from '../types';
 import { BADGES } from '../data/badges';
 import { calculateRankAndLevel } from '../utils/storage';
 import { playClickSound } from '../utils/audio';
 import { ThreatResilienceChart } from './ThreatResilienceChart';
 import { ThreatOriginHeatMap } from './ThreatOriginHeatMap';
 import { ModuleCompletionRadialChart } from './ModuleCompletionRadialChart';
+import { DailyChallengeCard } from './DailyChallengeCard';
 
 interface DashboardProps {
   stats: UserStats;
   incidents: BreachIncident[];
+  dailyChallenge: DailyChallengeSpec;
+  isDailyChallengeCompleted: boolean;
+  onSimulate24hReset: () => void;
   onLaunchSimulation: (simType: SimulationType) => void;
   onOpenPrivacy: () => void;
   onOpenBreachDetails: (incident: BreachIncident) => void;
@@ -19,6 +23,9 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({
   stats,
   incidents,
+  dailyChallenge,
+  isDailyChallengeCompleted,
+  onSimulate24hReset,
   onLaunchSimulation,
   onOpenPrivacy,
   onOpenBreachDetails,
@@ -121,7 +128,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div>
               <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="text-xl sm:text-2xl font-semibold text-[#EEF3F1] tracking-tight font-serif">
-                  Maniq Threat Guard — {stats.playerName ? `${stats.playerName}'s` : rankInfo.rankTitle} Posture
+                  Maniq | Arcade — {stats.playerName ? `${stats.playerName}'s` : rankInfo.rankTitle} Posture
                 </h1>
               </div>
               <p className="text-xs sm:text-sm text-[#A9B7BF] mt-1 max-w-2xl leading-relaxed">
@@ -227,6 +234,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
       </section>
+
+      {/* 24-Hour Daily Challenge Feature Card */}
+      <DailyChallengeCard
+        challenge={dailyChallenge}
+        isCompletedToday={isDailyChallengeCompleted}
+        hasDailySentinelBadge={stats.unlockedBadgeIds.includes('badge_daily_sentinel')}
+        onLaunchDailyChallenge={onLaunchSimulation}
+        onSimulate24hReset={onSimulate24hReset}
+      />
 
       {/* 01 / Competency Matrix & Radial Progress Visualization across 5 Security Domains */}
       <section className="p-6 rounded-xl bg-white border border-[#D9DDD3] shadow-xs space-y-5">

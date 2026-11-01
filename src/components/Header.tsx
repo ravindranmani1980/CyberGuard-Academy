@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
             RM
           </span>
           <span>
-            Maniq <span className="accent">Threat Guard</span>
+            Maniq <span className="text-[#A9B7BF] font-normal">|</span> <span className="accent">Arcade</span>
           </span>
         </a>
 

@@ -110,7 +110,7 @@ export const PrivacyShieldModal: React.FC<PrivacyShieldModalProps> = ({
               <span className="font-mono text-[#5FD3BF] text-[11px]">ZERO REMOTE UPLOADS</span>
             </div>
             <p className="text-[#A9B7BF] text-xs leading-relaxed">
-              Maniq Threat Guard is engineered so that zero personal information, keystrokes, candidate passwords, or device identifiers are ever transmitted to or persisted on remote servers.
+              Maniq | Arcade is engineered so that zero personal information, keystrokes, candidate passwords, or device identifiers are ever transmitted to or persisted on remote servers.
             </p>
             <div className="p-2.5 rounded-lg bg-[#0D1C2D] border border-[#5FD3BF]/30 text-[11px] font-mono text-[#EBC385]">
               Official Disclaimer: We do not store any user records and we will never send advertisement or marketing emails.

@@ -29,6 +29,22 @@ export interface UserStats {
   verifiedThreatIds: string[];
   bookmarkedThreatIds?: string[];
   sessionHistory?: SessionScorePoint[];
+  dailyChallengeCompletedDates?: string[];
+  dailyChallengeOffset?: number;
+}
+
+export interface DailyChallengeSpec {
+  id: string;
+  dateKey: string;
+  simType: SimulationType;
+  moduleCode: string;
+  operationName: string;
+  missionTitle: string;
+  constraintTitle: string;
+  constraintRule: string;
+  timeLimitSeconds: number;
+  bonusXp: number;
+  badgeId: string;
 }
 
 export interface BreachIncident {

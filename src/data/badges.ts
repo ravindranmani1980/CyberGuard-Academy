@@ -73,4 +73,13 @@ export const BADGES: Badge[] = [
     rarity: 'Common',
     xpReward: 80,
   },
+  {
+    id: 'badge_daily_sentinel',
+    title: 'Daily Sentinel',
+    description: 'Completed the 24-hour Daily Challenge simulation while satisfying its unique tactical constraint.',
+    icon: 'Flame',
+    category: 'detection',
+    rarity: 'Legendary',
+    xpReward: 200,
+  },
 ];

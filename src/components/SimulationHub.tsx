@@ -14,8 +14,11 @@ import {
   Shield,
   UserCheck,
   Edit3,
+  Timer,
+  RotateCcw,
+  AlertTriangle,
 } from 'lucide-react';
-import { SimulationType, BreachIncident, UserStats } from '../types';
+import { SimulationType, BreachIncident, UserStats, DailyChallengeSpec } from '../types';
 import { PhishingSim } from './simulations/PhishingSim';
 import { WiFiSim } from './simulations/WiFiSim';
 import { SocialEngSim } from './simulations/SocialEngSim';
@@ -27,6 +30,9 @@ import { playClickSound } from '../utils/audio';
 interface SimulationHubProps {
   initialSim?: SimulationType;
   stats: UserStats;
+  dailyChallenge: DailyChallengeSpec;
+  isDailyChallengeCompleted: boolean;
+  onCompleteDailyChallenge: () => void;
   onOpenPlayerEntry: (simType?: SimulationType) => void;
   onBreach: (incident: BreachIncident) => void;
   onSuccess: (xp: number, category: string, badgeId?: string) => void;
@@ -93,12 +99,19 @@ const PRAISE_MESSAGES: Record<
 export const SimulationHub: React.FC<SimulationHubProps> = ({
   initialSim = 'phishing',
   stats,
+  dailyChallenge,
+  isDailyChallengeCompleted,
+  onCompleteDailyChallenge,
   onOpenPlayerEntry,
   onBreach,
   onSuccess,
 }) => {
   const [activeSim, setActiveSim] = useState<SimulationType>(initialSim);
   const [moveStreak, setMoveStreak] = useState<number>(0);
+  const [constraintSecondsLeft, setConstraintSecondsLeft] = useState<number>(
+    dailyChallenge.timeLimitSeconds
+  );
+  const [flawlessConstraintIntact, setFlawlessConstraintIntact] = useState<boolean>(true);
   const [appreciationBanner, setAppreciationBanner] = useState<{
     id: number;
     xp: number;
@@ -111,6 +124,23 @@ export const SimulationHub: React.FC<SimulationHubProps> = ({
   useEffect(() => {
     setActiveSim(initialSim);
   }, [initialSim]);
+
+  // Reset Daily Challenge constraint timer when switching to the Daily Challenge module or when challenge changes
+  useEffect(() => {
+    setConstraintSecondsLeft(dailyChallenge.timeLimitSeconds);
+    setFlawlessConstraintIntact(true);
+  }, [activeSim, dailyChallenge.id, dailyChallenge.timeLimitSeconds]);
+
+  // Live countdown for the Daily Challenge unique time-limit constraint
+  useEffect(() => {
+    if (activeSim !== dailyChallenge.simType || isDailyChallengeCompleted) return;
+    if (constraintSecondsLeft <= 0) return;
+
+    const timer = setInterval(() => {
+      setConstraintSecondsLeft((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [activeSim, dailyChallenge.simType, isDailyChallengeCompleted, constraintSecondsLeft]);
 
   // Auto-hide the inline appreciation banner after 6 seconds
   useEffect(() => {
@@ -135,8 +165,15 @@ export const SimulationHub: React.FC<SimulationHubProps> = ({
     setActiveSim(simId);
   };
 
+  const handleResetConstraintAttempt = () => {
+    playClickSound();
+    setConstraintSecondsLeft(dailyChallenge.timeLimitSeconds);
+    setFlawlessConstraintIntact(true);
+  };
+
   const handleDrillBreach = (incident: BreachIncident) => {
     setMoveStreak(0);
+    setFlawlessConstraintIntact(false);
     setAppreciationBanner(null);
     onBreach(incident);
   };
@@ -148,19 +185,36 @@ export const SimulationHub: React.FC<SimulationHubProps> = ({
     const pool = PRAISE_MESSAGES[category] || PRAISE_MESSAGES.incidentResponse;
     const pick = pool[nextStreak % pool.length];
 
+    // Check if this drill completion also satisfies the 24-Hour Daily Challenge constraint
+    const isTargetDailySim = activeSim === dailyChallenge.simType;
+    const constraintSatisfied =
+      isTargetDailySim &&
+      !isDailyChallengeCompleted &&
+      constraintSecondsLeft > 0 &&
+      flawlessConstraintIntact;
+
     setAppreciationBanner({
       id: Date.now(),
-      xp,
-      headline: pick.headline,
-      detail: pick.detail,
-      flag: pick.flag,
+      xp: constraintSatisfied ? xp + dailyChallenge.bonusXp : xp,
+      headline: constraintSatisfied
+        ? `Daily Sentinel Unlocked! ${pick.headline}`
+        : pick.headline,
+      detail: constraintSatisfied
+        ? `You satisfied the Daily Challenge constraint (${dailyChallenge.constraintTitle}) and earned +${dailyChallenge.bonusXp} Bonus XP!`
+        : pick.detail,
+      flag: constraintSatisfied ? 'THM{DAILY-SENTINEL}' : pick.flag,
       streak: nextStreak,
     });
 
     onSuccess(xp, category, badgeId);
+
+    if (constraintSatisfied) {
+      onCompleteDailyChallenge();
+    }
   };
 
   const activePlayerCallsign = stats.playerName?.trim() || 'Guest Defender';
+  const isDailyChallengeModule = activeSim === dailyChallenge.simType;
 
   return (
     <div className="space-y-6">
@@ -227,6 +281,63 @@ export const SimulationHub: React.FC<SimulationHubProps> = ({
           </div>
         </div>
 
+        {/* Active 24-Hour Daily Challenge Constraint Tracker Bar */}
+        {isDailyChallengeModule && (
+          <div className="mt-3 p-3.5 rounded-xl bg-[#081420] border border-[#D79A45]/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono">
+                <span className="text-[#EBC385] font-bold uppercase flex items-center gap-1">
+                  <Flame className="w-3.5 h-3.5 text-[#D79A45]" />
+                  <span>Daily Challenge Active: {dailyChallenge.operationName}</span>
+                </span>
+                <span className="text-[#5FD3BF]">·</span>
+                <span className="text-[#5FD3BF] font-semibold">
+                  Reward: &ldquo;Daily Sentinel&rdquo; Badge + {dailyChallenge.bonusXp} Bonus XP
+                </span>
+              </div>
+              <p className="text-xs text-[#C9D3D9]">
+                <strong className="text-[#EEF3F1]">Constraint:</strong> {dailyChallenge.constraintRule}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              {isDailyChallengeCompleted ? (
+                <span className="px-3 py-1.5 rounded-lg bg-[#2BB5A0] text-[#04211B] text-xs font-mono font-bold flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>DAILY SENTINEL EARNED</span>
+                </span>
+              ) : constraintSecondsLeft > 0 && flawlessConstraintIntact ? (
+                <div className="px-3 py-1.5 rounded-lg bg-[#102236] border border-[#EBC385]/50 text-xs font-mono flex items-center gap-2">
+                  <Timer className="w-4 h-4 text-[#EBC385]" />
+                  <span className="text-[#A9B7BF]">CONSTRAINT WINDOW:</span>
+                  <span className="font-bold text-[#EBC385] tabular-nums">
+                    {constraintSecondsLeft}s
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1.5 rounded-lg bg-red-950/80 border border-red-400/50 text-red-200 text-[11px] font-mono flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5 text-red-300" />
+                    <span>
+                      {!flawlessConstraintIntact
+                        ? 'Breach Triggered — Constraint Violated'
+                        : 'Time Window Expired'}
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleResetConstraintAttempt}
+                    className="xh-btn !py-1.5 !px-2.5 !text-xs"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-[#5FD3BF]" />
+                    <span>Restart Constraint</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-lg sm:text-xl font-semibold text-[#EEF3F1] font-serif">
@@ -242,6 +353,7 @@ export const SimulationHub: React.FC<SimulationHubProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-4 mt-4 border-t border-[#C9D3D9]/15">
           {tabs.map((tab, index) => {
             const isActive = activeSim === tab.id;
+            const isDailyTarget = tab.id === dailyChallenge.simType;
             const shortcutNum = index + 1;
             return (
               <button
@@ -258,6 +370,17 @@ export const SimulationHub: React.FC<SimulationHubProps> = ({
                   <span className="shrink-0">{tab.icon}</span>
                   <span className="font-mono text-[11px] opacity-80 shrink-0">{tab.code}</span>
                   <span className="truncate">{tab.label}</span>
+                  {isDailyTarget && (
+                    <span
+                      className={`text-[9px] font-mono px-1.5 py-0.5 rounded uppercase shrink-0 ${
+                        isActive
+                          ? 'bg-[#04211B]/25 text-[#04211B] font-bold'
+                          : 'bg-[#D79A45]/25 text-[#EBC385] border border-[#D79A45]/50'
+                      }`}
+                    >
+                      DAILY
+                    </span>
+                  )}
                 </span>
                 <kbd
                   className={`text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0 ${
