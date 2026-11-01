@@ -161,7 +161,7 @@ export const PrivacyShieldModal: React.FC<PrivacyShieldModalProps> = ({
           {/* Author & Application Provenance */}
           <div className="p-4 rounded-xl bg-white border border-[#D9DDD3] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div>
-              <span className="font-semibold text-[#0E2238] block">Author: Mani Ravindran</span>
+              <span className="font-semibold text-[#0E2238] block">Author: Ravindran Mani</span>
               <p className="text-xs text-[#4B5A66] mt-0.5">
                 Interactive cyber defense posture and zero-data educational simulation platform.
               </p>

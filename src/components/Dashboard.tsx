@@ -139,7 +139,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   rel="noopener noreferrer"
                   className="text-[#5FD3BF] hover:underline font-mono"
                 >
-                  Mani Ravindran (ravindran.in)
+                  Ravindran Mani (ravindran.in)
                 </a>
                 .
               </p>

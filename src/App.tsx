@@ -668,7 +668,7 @@ export default function App() {
                   rel="noopener noreferrer"
                   className="text-[#5FD3BF] hover:underline font-medium"
                 >
-                  Mani Ravindran
+                  Ravindran Mani
                 </a>{' '}
                 (
                 <a

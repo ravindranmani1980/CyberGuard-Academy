@@ -1,6 +1,6 @@
 {
   "name": "Maniq Threat Guard",
-  "description": "Maniq Threat Guard by Mani Ravindran (ravindran.in) — Interactive cybersecurity game and threat simulator teaching safe digital habits. Zero record storage and zero advertisement emails.",
+  "description": "Maniq Threat Guard by Ravindran Mani (ravindran.in) — Interactive cybersecurity game and threat simulator teaching safe digital habits. Zero record storage and zero advertisement emails.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
